@@ -6,11 +6,15 @@ function World(duration=50,startPop=100,maxPop=10000,frameDuration=20){
     this.aliveHumanList=new Array();
     this.deadHumanList=new Array();
     this.logsList=new Array();
-    this.lastHumanId=0;
+    this.lastHumanId=10;
     this.age=0;
     for(let i=0;i<this.startPop;i++){
         this.aliveHumanList.push(new Human(true));
         this.aliveHumanList[i].id=this.lastHumanId;
         this.lastHumanId++;
     }
+}
+World.prototype.getHumanById= function(id){
+    let humanList=this.aliveHumanList.concat(this.deadHumanList);
+    return humanList.filter(function(ele){ return ele.id == id; })[0];
 }

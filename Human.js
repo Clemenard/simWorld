@@ -10,6 +10,8 @@ this.childs=0;
     this.name=this.getNamed();
     this.surname=this.getSurNamed();
     this.father="anonymous";
+    this.sex=(Math.random()>0.5)?"M":"F";
+    this.pairedWith=-1;
 
 }
 Human.prototype.AGE_MAX = 900;
@@ -22,12 +24,33 @@ Human.prototype.getOlder = function(){
 Human.prototype.deathProbability= function(){   
     return  Math.random()*(this.AGE_MAX*10-this.age*9)*12;
 }
+Human.prototype.getMarried= function(){
+    var myself=this;
+    let partner=world.aliveHumanList.filter(function(ele){
+        return (ele.sex!=myself.sex &&ele.pairedWith==-1 && ele.age<600 && ele.age>180 && ele.id!=myself.id );
+    })[0];
+if(partner){
+    this.pairedWith=partner.id;
+    partner.pairedWith=this.id;
+    let husband= (this.sex=="M")?this:partner
+    let wife=(this.sex=="M")?partner:this
+    let logMessage= new LogMessage("marriage","<span style='color:blue;' title='id="+husband.id+"'>"+husband.name+" "+husband.surname+"</span> get married with <span style='color:pink;' title='id="+wife.id+"'>"+wife.name+" "+wife.surname+"</span>.",world.age,[husband.id,wife.id])
+    wife.surname=husband.surname;
+    return  {"partnerId":partner.id,"logMarriage":logMessage};}
+    return false;
+}
 Human.prototype.death= function(deathList){ 
     if(this.deathProbability()<this.age) {
+        let logWidow=false;
         deathList.push(this)
-        let logMessage= new LogMessage("death",this.name+" "+this.surname+", died at the age of "+Math.floor(this.age/12)+".",world.age)
+        if(this.pairedWith>0){
+        let partner= this.getPartner();
+        console.log(this);
+        partner.pairedWith=-partner.pairedWith;
+        logWidow= new LogMessage("death","<span title='id="+partner.id+"'>"+partner.name+" "+partner.surname+"</span> became a widow"+genderMark(partner.sex,"widow")+" at the age of "+Math.floor(partner.age/12)+".",world.age,[partner.id]);}
+        let logDeath= new LogMessage("death","<span title='id="+this.id+"'>"+this.name+" "+this.surname+"</span> died at the age of "+Math.floor(this.age/12)+".",world.age,[this.id]);
         this.age=-this.age;
-        return logMessage;
+        return {'logDeath':logDeath,'logWidow':logWidow};
     }
     return false;
 }
@@ -42,14 +65,27 @@ Human.prototype.getSurNamed= function(){
     let index=Math.round(getRandomArbitrary(0,this.SURNAME_LIST.length-1));
     return  this.SURNAME_LIST[index];
 }
-Human.prototype.birth= function(){ 
-    if(this.birthProbability()>Math.random()) {
+Human.prototype.birth= function(){
+    if(this.birthProbability()>Math.random() && this.pairedWith>0) {
+        let partner= this.getPartner();
+        if(partner){
         this.childs++;
+        partner.childs++;
         let newborn= new Human();
+        newborn.id=world.lastHumanId;
+        world.lastHumanId++;
         newborn.surname=this.surname;
         newborn.father=this.id;
-        let logMessage= new LogMessage("birth",newborn.name+" is born from "+this.name+" "+this.surname+", who was "+Math.floor(this.age/12)+".",world.age)
-        return {"newborn":newborn,"logBirth":logMessage};
+        let logMessage= new LogMessage("birth","<span title='id="+newborn.id+"'>"+newborn.name+"</span> is born from <span title='id="+this.id+"'>"+this.name+"</span> "+this.surname+", who was "+Math.floor(this.age/12)+".",world.age,[newborn.id,this.id])
+        return {"newborn":newborn,"logBirth":logMessage};}
     }
     return false;
+}
+Human.prototype.getPartner= function(){
+    let myself=this;
+    return world.aliveHumanList.filter(function(ele){ return ele.id == myself.pairedWith; })[0];
+}
+Human.prototype.getRelatedLogs= function(){
+    let myself=this;
+    return world.logsList.filter(function(ele){ return ele.related.includes(myself.id); });
 }
