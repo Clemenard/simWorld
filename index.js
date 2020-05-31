@@ -4,7 +4,7 @@
 let human = new Human();
 var world= new World();
 $('#begin').click(function(){
-    world= new World(Number($('#age').val()),Number($('#pop-start').val()),Number($('#pop-max').val()));
+    world= new World(Number($('#age').val()),Number($('#pop-start').val()),Number($('#pop-max').val()),Number($('#frame-duration').val()));
 oneTurn();
 })
 $('#search').click(function(){
@@ -34,7 +34,7 @@ function oneTurn(){
 world.aliveHumanList=world.aliveHumanList.filter(function(ele){ return ele.age >= 0; });
 world.age++;
  if(world.age<world.duration){
- setTimeout(oneTurn,10);}
+ setTimeout(oneTurn,world.frameDuration);}
  else{
      console.log(world.logsList)
  }

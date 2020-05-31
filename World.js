@@ -1,7 +1,8 @@
-function World(duration=50,startPop=100,maxPop=200000){
-    this.duration=duration;
-    this.startPop=startPop;
-    this.maxPop=maxPop;
+function World(duration=50,startPop=100,maxPop=10000,frameDuration=20){
+    this.duration=(duration>1)?duration:50;
+    this.startPop=(startPop>1)?startPop:100;
+    this.maxPop=(maxPop>10)?maxPop:10000;
+    this.frameDuration=(frameDuration>5)?frameDuration:20;
     this.aliveHumanList=new Array();
     this.deadHumanList=new Array();
     this.logsList=new Array();
