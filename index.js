@@ -29,19 +29,18 @@ $('#all-human').click(function(){
     html+="<table><tr><th>Nom</th><th>Prénom</th><th>Age</th><th>Conjoint</th><th>Enfants</th></tr>";
     world.aliveHumanList.forEach(element=>{
         let partner=element.getPartner();
-        if (partner && partner.age>=0){var partnerName=partner.name;var status="";}
+        if (partner && partner.age>=0){var partnerName="<span class='"+partner.sex+" link' value='"+partner.id+"' title='id : "+partner.id+"'>"+partner.name+"</span>";var status="";}
         else if (partner ){var partnerName="<span class='"+partner.sex+" link' value='"+partner.id+"' title='id : "+partner.id+"'>"+partner.name+"</span>";var status=", dead";}
         else {var partnerName="";var status="";}
         let childs = element.getChilds();
-        console.log(childs)
         var childString='';
         if(childs){     
         childs.forEach((child,index,childs)=>{
             if(index!=0){childString+=", ";}
 childString+="<span class='"+child.sex+" link' value='"+child.id+"' title='id : "+child.id+"'>"+child.name+"</span>";
         })}
-        html+="<tr><td class="+element.sex+">"+element.name+"</td>";
-        html+="<td class="+element.sex+">"+element.surname+"</td>";
+        html+="<tr><td class="+element.sex+">"+element.surname+"</td>";
+        html+="<td class="+element.sex+">"+element.name+"</td>";
         html+="<td>"+element.getAge()+"</td>"; 
         html+="<td>"+partnerName+""+status+"</td>";   
         html+="<td>"+childString+"</td></tr>";
