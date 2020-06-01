@@ -1,6 +1,6 @@
 function Human(isGenerate=false,father,mother){
     if(isGenerate){
-        this.age=getRandomArbitrary(0,human.AGE_MAX);
+        this.age=utils.getRandomArbitrary(0,human.AGE_MAX);
         this.father="anonymous";
         this.mother="anonymous";
     }
@@ -29,8 +29,8 @@ Human.prototype.getMarried= function(){
     let partner=world.aliveHumanList.filter(function(ele){
         return (ele.sex!=myself.sex && ele.pairedWith==-1 && ele.age<600 && ele.age>180 && ele.id!=myself.id );
     });
-    partner=partner[getRandomArbitrary(0,partner.length-1)]
-if(partner && getRandomArbitrary(0,12)==1){
+    partner=partner[utils.getRandomArbitrary(0,partner.length-1)]
+if(partner && utils.getRandomArbitrary(0,12)==1){
     this.pairedWith=partner.id;
     partner.pairedWith=this.id;
     let husband= (this.sex=="male")?this:partner
@@ -47,7 +47,7 @@ Human.prototype.death= function(deathList){
         if(this.pairedWith>0){
         let partner= this.getPartner();
         partner.pairedWith=-partner.pairedWith;
-        logWidow= new LogMessage("death","[ id="+partner.id+"]"+partner.name+" "+partner.surname+"[/id] became a widow"+genderMark(partner.sex,"er")+" at the age of "+partner.getAge()+".",world.age,[partner.id]);}
+        logWidow= new LogMessage("death","[ id="+partner.id+"]"+partner.name+" "+partner.surname+"[/id] became a widow"+utils.genderMark(partner.sex,"er")+" at the age of "+partner.getAge()+".",world.age,[partner.id]);}
         let logDeath= new LogMessage("death","[ id="+this.id+"]"+this.name+" "+this.surname+"[/id] died at the age of "+this.getAge()+".",world.age,[this.id]);
         this.age=-this.age;
         return {'logDeath':logDeath,'logWidow':logWidow};
@@ -60,11 +60,11 @@ Human.prototype.birthProbability= function(){
 }
 Human.prototype.getNamed= function(){
     let nameList=(this.sex=='male')?this.MALE_NAME_LIST:this.FEMALE_NAME_LIST
-    let index=Math.round(getRandomArbitrary(0,nameList.length-1));
+    let index=Math.round(utils.getRandomArbitrary(0,nameList.length-1));
     return  nameList[index];
 }
 Human.prototype.getSurNamed= function(){
-    let index=Math.round(getRandomArbitrary(0,this.SURNAME_LIST.length-1));
+    let index=Math.round(utils.getRandomArbitrary(0,this.SURNAME_LIST.length-1));
     return  this.SURNAME_LIST[index];
 }
 Human.prototype.birth= function(){
@@ -109,6 +109,29 @@ Human.prototype.getRelatedLogs= function(){
 Human.prototype.getAge= function(){
     return Math.floor(this.age/12);
 }
+Human.prototype.logDay= function(type){
+    let myself=this;
+    let deathLog=world.logsList.filter(function(ele){ return ele.related.includes(myself.id) && ele.type==type; })[0]
+    if (deathLog && this.father!='anonymous'){
+    return Math.floor(deathLog.age/12);}
+    return '';
+}
+
+Human.prototype.display= function(){
+    let display=utils.genderMark(this.sex,"name")+' '+this.surname.toUpperCase()+" "+this.name+", "+this.logDay('birth')+"-"+this.logDay('death')
+    return display;
+}
+
+Human.prototype.getAncestors= function(sex,array){
+let idAncestor =(sex=="male")?this.father:this.mother;
+let ancestor=world.getHumanById(idAncestor);
+if(ancestor){
+    array.push(ancestor);    
+    return ancestor.getAncestors(sex,array)
+}
+else{return array;}
+}
+
 Human.prototype.SURNAME_LIST = ['Martin',
 'Bernard',
 'Thomas',

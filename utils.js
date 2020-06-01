@@ -1,8 +1,8 @@
-function getRandomArbitrary(min, max) {
+function Utils(){}
+Utils.prototype.getRandomArbitrary= function(min, max) {
   return Math.round(Math.random() * (max - min) + min);
 }
-function arrayRemove(arr, value) { return arr.filter(function(ele){ return ele != value; });}
-function numberParticle(number){
+Utils.prototype.numberParticle= function (number){
   switch (number) {
     case 1: return "st";
     case 2: return "nd";
@@ -10,7 +10,7 @@ function numberParticle(number){
     default: return "th";
   }
 }
-function genderMark(sex,kind){
+Utils.prototype.genderMark= function(sex,kind){
   switch(kind){
     case "er": return (sex=="male")?"er":"";
     case "name":return (sex=="male")?"Mr":"Mme";
