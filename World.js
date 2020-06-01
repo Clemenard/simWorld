@@ -19,3 +19,23 @@ World.prototype.getHumanById= function(id){
     let humanList=this.aliveHumanList.concat(this.deadHumanList);
     return humanList.filter(function(ele){ return ele.id == id; })[0];
 }
+World.prototype.getMainFamilies= function(year){
+    let mainFamilies=new Array();
+    this.census[year].forEach(element => {
+        if(!mainFamilies[element.surname]){mainFamilies[element.surname]=0;}
+        mainFamilies[element.surname]++; 
+    });
+    return mainFamilies;
+} 
+World.prototype.getMediumAgeOnTime= function(){
+    let data= new Array();
+    data.push(['Year', 'Medium Age'])
+    this.census.forEach((element,index,childs)=>{
+    let mediumAge = element.reduce((accumulator, currentValue) => {
+        return (accumulator + currentValue.age);},0)/(element.length*12);
+        data.push([index,mediumAge])
+    
+});
+return data;
+}
+

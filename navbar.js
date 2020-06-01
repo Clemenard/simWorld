@@ -28,13 +28,20 @@ $('#search-human').click(function(){
 $('body').on('click', '.link',function(){
     humanData(Number($(this).attr('value')))   
 })
+$('body').on('click', '#graph',function(){
+    $('#myLogs').html('<div id="curve_chart" style="width: 900px; height: 500px"></div>');
+
+let data=world.getMediumAgeOnTime();
+google.charts.setOnLoadCallback(utils.drawChart(data,'Medium Age'));
+})
 
 //get a table of all humans
 $('#all-human').click(function(){
     let html=''
-    let year=(Number($('#year').val())>world.age)?world.age:Number($('#year').val());
-    let list=(year==-1)?world.aliveHumanList:world.census[year];
+    let year=(Number($('#year').val())*12>world.age || Number($('#year').val())<0)?(world.age-world.age%12)/12:Number($('#year').val());
+    let list=(year==(world.age-world.age%12)/12)?world.aliveHumanList:world.census[year];
     html+='<h1> Census of the year '+year+'</h1>';
+    html+='<div class="row"><div id="census-table" class="col">'
     html+="<table><tr><th>Surname</th><th>Name</th><th>Age</th><th>Conjoint</th><th>Childs</th></tr>";
     list.forEach(element=>{
         let partner=world.getHumanById(element.pairedWith);;
@@ -54,7 +61,14 @@ childString+="["+child.sex+" id="+child.id+"]"+child.name+"[/id]";
         html+="<td>"+partnerName+""+status+"</td>";   
         html+="<td>"+childString+"</td></tr>";
     })
-    html+="</table>";
+    html+="</table></div><div class='col' id='census-stats'>";
+    let mainSurnames=world.getMainFamilies(year);
+    mainSurnames=utils.getSortedKeys(mainSurnames);
+    html+="<h3>Most used surnames</h3>"
+    for( let i=0;i<10;i++){
+        html+="<p>"+(i+1)+". "+mainSurnames[i].key+" has "+mainSurnames[i].value+" members.</p>";   
+    }
+    html+="</div></div>"
     html=utils.applyBBCode(html);
     $('#myLogs').html(html);
 })

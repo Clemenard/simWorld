@@ -4,6 +4,7 @@
 let utils= new Utils();
 let human = new Human();
 let world= new World();
+google.charts.load('current', {'packages':['corechart']});
 function oneTurn(){
     let timeLog=new LogMessage("time",world.age+" month of game. There is "+world.aliveHumanList.length+' humans.',world.age)
     $('#timelapse').html(timeLog.message);
