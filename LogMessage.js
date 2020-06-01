@@ -5,4 +5,5 @@ function LogMessage(type="general",message="Nothing to say",age=undefined,relate
     this.related=related
 }
 LogMessage.prototype.display= function(){
-    return "<strong>"+(this.age%12+1)+""+numberParticle(this.age%12+1)+" month of the "+Math.floor(this.age/12)+" year</strong> : "+this.message+"<br>";}
+    let display=this.message.replace(/\[(\w*?) id=(\d+)\](.*?)\[\/id\]/g,"<span class='$1 link' value='$2' title='id : $2'>$3</span>")
+    return "<strong>"+(this.age%12+1)+""+numberParticle(this.age%12+1)+" month of the "+Math.floor(this.age/12)+" year</strong> : "+display+"<br>";}

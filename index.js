@@ -58,8 +58,5 @@ world.aliveHumanList=world.aliveHumanList.filter(function(ele){ return ele.age >
 world.age++;
  if(world.age<world.duration){
  setTimeout(oneTurn,world.frameDuration);}
- else{
-     console.log(world.logsList)
- }
 
 }
