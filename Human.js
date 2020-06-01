@@ -1,15 +1,18 @@
-function Human(isGenerate=false){
+function Human(isGenerate=false,father,mother){
     if(isGenerate){
         this.age=getRandomArbitrary(0,human.AGE_MAX);
+        this.father="anonymous";
+        this.mother="anonymous";
     }
     else{
 this.age=0;
+if(father){
+this.father=father.id;
+this.mother=mother.id;}
     }
     this.name=this.getNamed();
     this.surname=this.getSurNamed();
-    this.father="anonymous";
-    this.mother="anonymous";
-    this.sex=(Math.random()>0.5)?"M":"F";
+    this.sex=(Math.random()>0.5)?"male":"female";
     this.pairedWith=-1;
     this.childs=0;
 
@@ -33,8 +36,8 @@ Human.prototype.getMarried= function(){
 if(partner && getRandomArbitrary(0,12)==1){
     this.pairedWith=partner.id;
     partner.pairedWith=this.id;
-    let husband= (this.sex=="M")?this:partner
-    let wife=(this.sex=="M")?partner:this
+    let husband= (this.sex=="male")?this:partner
+    let wife=(this.sex=="male")?partner:this
     let logMessage= new LogMessage("marriage","[male id="+husband.id+"]"+husband.name+" "+husband.surname+"[/id] get married with [female id="+wife.id+"]"+wife.name+" "+wife.surname+"[/id].",world.age,[husband.id,wife.id])
     wife.surname=husband.surname;
     return  {"partnerId":partner.id,"logMarriage":logMessage};}
@@ -47,7 +50,7 @@ Human.prototype.death= function(deathList){
         if(this.pairedWith>0){
         let partner= this.getPartner();
         partner.pairedWith=-partner.pairedWith;
-        logWidow= new LogMessage("death","[ id="+partner.id+"]"+partner.name+" "+partner.surname+"[/id] became a widow"+genderMark(partner.sex,"widow")+" at the age of "+partner.getAge()+".",world.age,[partner.id]);}
+        logWidow= new LogMessage("death","[ id="+partner.id+"]"+partner.name+" "+partner.surname+"[/id] became a widow"+genderMark(partner.sex,"er")+" at the age of "+partner.getAge()+".",world.age,[partner.id]);}
         let logDeath= new LogMessage("death","[ id="+this.id+"]"+this.name+" "+this.surname+"[/id] died at the age of "+this.getAge()+".",world.age,[this.id]);
         this.age=-this.age;
         return {'logDeath':logDeath,'logWidow':logWidow};
@@ -70,23 +73,28 @@ Human.prototype.birth= function(){
     if(this.birthProbability()>Math.random() && this.pairedWith>0) {
         let partner= this.getPartner();
         if(partner){
-            let father=(this.sex=="M")? this : partner;
-            let mother=(this.sex=="F")? this : partner;
+            let father=(this.sex=="male")? this : partner;
+            let mother=(this.sex=="female")? this : partner;
             father.childs++;
             mother.childs++;
-        let newborn= new Human();
+        let newborn= new Human(false,father,mother);
         newborn.id=world.lastHumanId;
         world.lastHumanId++;
         newborn.surname= father.surname;
-        let sexClass=(newborn.sex=="M")? "male" : "female";
-        let logMessage= new LogMessage("birth","["+sexClass+" id="+newborn.id+"]"+newborn.name+"[/id] is born from [female id="+mother.id+"]"+mother.name+" "+mother.surname+"[/id], who was "+mother.getAge()+" and [male id="+father.id+"]"+father.name+" "+father.surname+"[/id], who was "+father.getAge()+".",world.age,[newborn.id,mother.id,father.id])
+        let logMessage= new LogMessage("birth","["+newborn.sex+" id="+newborn.id+"]"+newborn.name+"[/id] is born from [female id="+mother.id+"]"+mother.name+" "+mother.surname+"[/id], who was "+mother.getAge()+" and [male id="+father.id+"]"+father.name+" "+father.surname+"[/id], who was "+father.getAge()+".",world.age,[newborn.id,mother.id,father.id])
         return {"newborn":newborn,"logBirth":logMessage};}
     }
     return false;
 }
 Human.prototype.getPartner= function(){
     let myself=this;
-    return world.aliveHumanList.filter(function(ele){ return ele.id == myself.pairedWith; })[0];
+    let humanList=world.aliveHumanList.concat(world.deadHumanList);
+    return humanList.filter(function(ele){ return ele.id == myself.pairedWith; })[0];
+}
+Human.prototype.getChilds= function(){
+    let myself=this;
+    let humanList=world.aliveHumanList.concat(world.deadHumanList);
+    return humanList.filter(function(ele){ return ele.father == myself.id ; });
 }
 Human.prototype.getRelatedLogs= function(){
     let myself=this;

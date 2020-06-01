@@ -12,7 +12,7 @@ function numberParticle(number){
 }
 function genderMark(sex,kind){
   switch(kind){
-    case"widow": return (sex=="M")?"er":"";
-    case "name":return (sex=="M")?"Mr":"Mme";
+    case "er": return (sex=="male")?"er":"";
+    case "name":return (sex=="male")?"Mr":"Mme";
     default:return "";}
 }
