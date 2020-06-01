@@ -16,3 +16,7 @@ Utils.prototype.genderMark= function(sex,kind){
     case "name":return (sex=="male")?"Mr":"Mme";
     default:return "";}
 }
+Utils.prototype.applyBBCode = function(string){
+  string=string.replace(/\[(\w*?) id=(\d+)\](.*?)\[\/id\]/g,"<span class='$1 link' value='$2' title='id : $2'>$3</span>");
+  return string;
+}

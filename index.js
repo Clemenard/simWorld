@@ -36,6 +36,12 @@ function oneTurn(){
 });
 world.aliveHumanList=world.aliveHumanList.filter(function(ele){ return ele.age >= 0; });
 world.age++;
+if(world.age%12==0){
+    world.census.push(new Array());
+    world.aliveHumanList.forEach(element => {
+        world.census[world.census.length-1].push(jQuery.extend({}, element));
+    });
+}
  if(world.age<world.duration){
  setTimeout(oneTurn,world.frameDuration);}
 

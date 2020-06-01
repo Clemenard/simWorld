@@ -1,6 +1,10 @@
 //generate new world
 $('#begin').click(function(){
     world= new World(Number($('#age').val()),Number($('#pop-start').val()),Number($('#pop-max').val()),Number($('#frame-duration').val()));
+    world.census.push(new Array());
+    world.aliveHumanList.forEach(element => {
+        world.census[world.census.length-1].push(jQuery.extend({}, element));
+    });
 oneTurn();
 })
 
@@ -28,26 +32,30 @@ $('body').on('click', '.link',function(){
 //get a table of all humans
 $('#all-human').click(function(){
     let html=''
-    html+="<table><tr><th>Nom</th><th>Prénom</th><th>Age</th><th>Conjoint</th><th>Enfants</th></tr>";
-    world.aliveHumanList.forEach(element=>{
-        let partner=element.getPartner();
-        if (partner && partner.age>=0){var partnerName="<span class='"+partner.sex+" link' value='"+partner.id+"' title='id : "+partner.id+"'>"+partner.name+"</span>";var status="";}
-        else if (partner ){var partnerName="<span class='"+partner.sex+" link' value='"+partner.id+"' title='id : "+partner.id+"'>"+partner.name+"</span>";var status=", dead";}
+    let year=(Number($('#year').val())>world.age)?world.age:Number($('#year').val());
+    let list=(year==-1)?world.aliveHumanList:world.census[year];
+    html+='<h1> Census of the year '+year+'</h1>';
+    html+="<table><tr><th>Surname</th><th>Name</th><th>Age</th><th>Conjoint</th><th>Childs</th></tr>";
+    list.forEach(element=>{
+        let partner=world.getHumanById(element.pairedWith);;
+        if (partner && partner.age>=0){var partnerName="["+partner.sex+" id="+partner.id+"]"+partner.name+"[/id]";var status="";}
+        else if (partner ){var partnerName="["+partner.sex+" id="+partner.id+"]"+partner.name+"[/id]";var status=", dead";}
         else {var partnerName="";var status="";}
         let childs = element.getChilds();
         var childString='';
         if(childs){     
         childs.forEach((child,index,childs)=>{
             if(index!=0){childString+=", ";}
-childString+="<span class='"+child.sex+" link' value='"+child.id+"' title='id : "+child.id+"'>"+child.name+"</span>";
+childString+="["+child.sex+" id="+child.id+"]"+child.name+"[/id]";
         })}
-        html+="<tr><td class="+element.sex+">"+element.surname+"</td>";
-        html+="<td class="+element.sex+">"+element.name+"</td>";
+        html+="<tr><td>["+element.sex+" id="+element.id+"]"+element.surname+"[/id]</td>";
+        html+="<td>["+element.sex+" id="+element.id+"]"+element.name+"[/id]</td>";
         html+="<td>"+element.getAge()+"</td>"; 
         html+="<td>"+partnerName+""+status+"</td>";   
         html+="<td>"+childString+"</td></tr>";
     })
     html+="</table>";
+    html=utils.applyBBCode(html);
     $('#myLogs').html(html);
 })
 

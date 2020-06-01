@@ -6,6 +6,7 @@ function World(duration=50,startPop=100,maxPop=10000,frameDuration=20){
     this.aliveHumanList=new Array();
     this.deadHumanList=new Array();
     this.logsList=new Array();
+    this.census=new Array();
     this.lastHumanId=10;
     this.age=0;
     for(let i=0;i<this.startPop;i++){

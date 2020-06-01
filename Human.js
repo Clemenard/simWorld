@@ -45,7 +45,7 @@ Human.prototype.death= function(deathList){
         let logWidow=false;
         deathList.push(this)
         if(this.pairedWith>0){
-        let partner= this.getPartner();
+        let partner= world.getHumanById(this.pairedWith);
         partner.pairedWith=-partner.pairedWith;
         logWidow= new LogMessage("death","[ id="+partner.id+"]"+partner.name+" "+partner.surname+"[/id] became a widow"+utils.genderMark(partner.sex,"er")+" at the age of "+partner.getAge()+".",world.age,[partner.id]);}
         let logDeath= new LogMessage("death","[ id="+this.id+"]"+this.name+" "+this.surname+"[/id] died at the age of "+this.getAge()+".",world.age,[this.id]);
@@ -75,7 +75,7 @@ Human.prototype.birth= function(){
         this.pregnancyState++;   
     }
     else if(this.pregnancyState==9){
-        let partner= this.getPartner();
+        let partner= world.getHumanById(this.pairedWith);;
         if(partner){
             let father=(this.sex=="male")? this : partner;
             let mother=(this.sex=="female")? this : partner;
@@ -92,11 +92,6 @@ Human.prototype.birth= function(){
         return false;
     }
 
-Human.prototype.getPartner= function(){
-    let myself=this;
-    let humanList=world.aliveHumanList.concat(world.deadHumanList);
-    return humanList.filter(function(ele){ return ele.id == myself.pairedWith; })[0];
-}
 Human.prototype.getChilds= function(){
     let myself=this;
     let humanList=world.aliveHumanList.concat(world.deadHumanList);
@@ -118,7 +113,8 @@ Human.prototype.logDay= function(type){
 }
 
 Human.prototype.display= function(){
-    let display=utils.genderMark(this.sex,"name")+' '+this.surname.toUpperCase()+" "+this.name+", "+this.logDay('birth')+"-"+this.logDay('death')
+    let display=utils.genderMark(this.sex,"name")+' ['+this.sex+' id='+this.id+']'+this.surname.toUpperCase()+" "+this.name+"[/id], "+this.logDay('birth')+"-"+this.logDay('death')
+    display=utils.applyBBCode(display);
     return display;
 }
 
