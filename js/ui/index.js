@@ -6,10 +6,15 @@ let lastHouseId=10;
 let utils= new Utils();
 let human = new Human();
 let world= new World();
+let frontBlock= new FrontBlock();
+
+$('#myLogs').html(frontBlock.homePanel());
 google.charts.load('current', {'packages':['corechart']});
+
+
 function oneTurn(){
     let timeLog=new LogMessage("time",world.age+" month of game. There is "+world.aliveHumanList.length+' humans.')
-    $('#timelapse').html(timeLog.message);
+    $('#calendar').html(timeLog.message);
     $('#myLogs').append(timeLog);
     world.logsList.push(timeLog);
     world.aliveHumanList.forEach(element => {
@@ -53,7 +58,7 @@ if(world.age%12==0){
         world.census.house[world.census.house.length-1].push(jQuery.extend({}, element));
     });
 }
- if(world.age<world.duration){
+ if(world.age<world.duration && world.frameDuration!="pause"){
  setTimeout(oneTurn,world.frameDuration);}
 
 }

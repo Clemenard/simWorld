@@ -1,4 +1,4 @@
-function World(duration=50,startPop=100,maxPop=10000,frameDuration=20){
+function World(duration=50,startPop=100,maxPop=10000,frameDuration=1000){
     lastHumanId=10;
  lastHouseId=10;
     this.duration=(duration>1)?duration:50;
@@ -61,7 +61,6 @@ switch(elt){
         data.push(dataRow)
     
 });
-console.log(data)
 return data;
 }
 

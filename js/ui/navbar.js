@@ -1,7 +1,16 @@
 //generate new world
-$('#begin').click(function(){
+$('body').on('click', '#homepage',function(){
+    $('#myLogs').html(frontBlock.homePanel());
+    $('#navbar').hide();
+    $('#timelapse').hide();
+    world.frameDuration="pause";
+})
+
+$('body').on('click', '#begin',function(){
+
     $('#navbar').show();
-    world= new World(Number($('#age').val())*12,Number($('#pop-start').val()),Number($('#pop-max').val()),Number($('#frame-duration').val()));
+    $('#timelapse').show();
+    world= new World(Number($('#age').val())*12,Number($('#pop-start').val()),Number($('#pop-max').val()));
     $('#myLogs').html('');
     world.census.human.push(new Array());
     world.aliveHumanList.forEach(element => {
@@ -13,9 +22,25 @@ $('#begin').click(function(){
     });
 oneTurn();
 })
+$('body').on('click', '.timelapse',function(){
+    let formerDuration=world.frameDuration
+            $('.timelapse').prop('disabled', false);
+            $(this).prop('disabled', true);
+            switch($(this).attr('id')){
+                case 'timelapse-play':  world.frameDuration=1000;break;
+                case 'timelapse-play2':  world.frameDuration=500;break;
+                case 'timelapse-play10':  world.frameDuration=100;break;
+                case 'timelapse-play50':  world.frameDuration=20;break;
+                case 'timelapse-pause':  world.frameDuration="pause";
+    }
+    if($(this).attr('id')!="timelapse-pause" && formerDuration=="pause"){
+        console.log("replay")
+        oneTurn();
+    }
+})
 
 //get logs for a kind of event
-$('#search').click(function(){
+$('body').on('click', '#search',function(){
     $('#myLogs').html('');
     if($('#chooseStat').val()=="child-number"){}
     else{
@@ -26,7 +51,7 @@ $('#search').click(function(){
 })
 
 //get data about an human defined by id
-$('#search-human').click(function(){
+$('body').on('click', '#search-human',function(){
     humanData(Number($('#id-human').val())) 
 })
 
@@ -34,35 +59,30 @@ $('#search-human').click(function(){
 $('body').on('click', '.link',function(){
     humanData(Number($(this).attr('value')))   
 })
-$('body').on('click', '#graph',function(){
-    let data=''
-    if($('#curve_chart').val()){
-        
-        $('#curve_chart').html('');
-        data=world.getDataGraph([$('#chooseGraph').val()]);}
-    else{
-    let html='<select class="mt-3" id=chooseGraph>'
-    html+='<option value="Medium Age">Medium Age</option>'
-    html+='<option value="Total Money">Total Money</option>'
-    html+="</select>"
-    $('#myLogs').html(html)
-    $('#myLogs').append('<div id="curve_chart" style="width: 900px; height: 500px"></div>');
-    console.log($('#chooseGraph').val())
- data=world.getDataGraph(["Medium Age"]);}
-google.charts.setOnLoadCallback(utils.drawChart(data,'Medium Age'));
+$('body').on('click', '#graph, #graph-change',function(){
+    let min=$('#graph-min').val();
+    if(!min){min=0;}
+    let max=$('#graph-max').val();
+    if(!max){max=100000;}
+    let category=$('#chooseGraph').val();
+    if(!category){category="Medium Age";}
+
+    $('#myLogs').html(frontBlock.graphPanel(min,max,category))
+ data=world.getDataGraph([category]);
+ google.charts.setOnLoadCallback(utils.drawChart(data,category));
+
 })
+$('body').on('change', '#chooseGraph',function(){
+    let data=world.getDataGraph([$('#chooseGraph').val()]);
+    google.charts.setOnLoadCallback(utils.drawChart(data,'Medium Age'));
+    })
 
 $('body').on('click', '.link',function(){
     humanData(Number($(this).attr('value')))   
 })
-$('body').on('change', '#chooseGraph',function(){
-console.log($('#chooseGraph').val())
-let data=world.getDataGraph([$('#chooseGraph').val()]);
-google.charts.setOnLoadCallback(utils.drawChart(data,'Medium Age'));
-})
 
 //get a table of all humans
-$('#all-human').click(function(){
+$('body').on('click', '#all-human',function(){
     let html=''
     let year=(Number($('#year').val())*12>world.age || Number($('#year').val())<0)?(world.age-world.age%12)/12:Number($('#year').val());
     let list=(year==(world.age-world.age%12)/12)?world.houseList:world.census.house[year];
@@ -77,9 +97,10 @@ $('#all-human').click(function(){
         let mother=world.getHumanById(element.leader.pairedWith,year);
         let wife=''
         if(mother){wife=mother.display()}
-        let childsAtHome = element.leader.getChilds("none",year).filter(function(ele){
-            return (ele.home==element.id);
-        });;
+        let childs=element.leader.getChilds("none",year)
+        let childsAtHome = childs.filter(function(ele){
+            return (ele.house==element.id);
+        });
         var childString='';
         if(childsAtHome){  
             childsAtHome.forEach((child,index,childs)=>{
@@ -98,7 +119,7 @@ childString+=child.display();
     mainSurnames=utils.getSortedKeys(mainSurnames);
     html+="<h3>Most used surnames</h3>"
     for( let i=0;i<10;i++){
-        let housesName = world.getHousesBySurname(mainSurnames[i].key);
+        let housesName = world.getHousesBySurname(mainSurnames[i].key,year);
         let gold=0
         housesName.forEach(house => {
            gold+=house.gold; 

@@ -9,7 +9,15 @@
 </head>
 <body>
     <div class="container">
-    <div id="timelapse"></div>
+        <h1 id="homepage"> Sim World &#127758;</h1>
+    <div id="timelapse" style='display:none;'>
+        <div id="calendar"></div>
+    <button id="timelapse-pause" class="timelapse">Pause</button>
+    <button id="timelapse-play" class="timelapse" disabled>Play</button>
+    <button id="timelapse-play2" class="timelapse">Play x2</button>
+    <button id="timelapse-play10" class="timelapse">Play x10</button>
+    <button id="timelapse-play50" class="timelapse">Play x50</button>
+</div>
     <div id="navbar" style='display:none;'>
         <select id="chooseStat">
             <option value="birth">Births</option>
@@ -28,23 +36,6 @@
         <button id="all-human">Census</button><button id="graph">Graph</button>
     </div>
     <div id="myLogs">
-        <h1 class="mb-3 text-center">World settings</h1>
-        <div class="row mt-5">
-        <div class="form-group col-6">
-        <label for="year">Number of years</label>
-        <input type="number" id="age" value=100 step=1 min=1>
-        </div>
-        <div class="form-group col-6">
-        <label for="year">Starting population</label>
-        <input type="number" id="pop-start" value=200 step=1 min=100 ></div>
-        <div class="form-group col-6">
-        <label for="year">Ceiling population</label>
-        <input type="number" id="pop-max" value=10000 step=1 min=100 max=1000000></div>
-        <div class="form-group col-6">
-        <label for="year">Turn duration (ms)</label>
-        <input type="number" id="frame-duration" value=50 step=5 min=5></div>
-        <button id="begin" class="ml-5">Generate a new world</button>
-    </div>
     </div>
 </div>
 </body>
@@ -56,6 +47,7 @@
 <script src="js/classes/Utils.js"></script>
 <script src="js/classes/Human.js"></script>
 <script src="js/classes/World.js"></script>
+<script src="js/classes/FrontBlock.js"></script>
 <script src="js/classes/House.js"></script>
 <script src="js/classes/LogMessage.js"></script>
 <script src="js/ui/navbar.js"></script>
