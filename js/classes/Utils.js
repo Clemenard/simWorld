@@ -14,8 +14,12 @@ Utils.prototype.genderMark= function(sex,kind){
   switch(kind){
     case "er": return (sex=="male")?"er":"";
     case "name":return (sex=="male")?"Mr":"Mme";
+    case "name":return (sex=="male")?"Mr":"Mme";
     default:return "";}
 }
+Utils.prototype.aOrAn= function(word){
+  return(['a','e','i','o','u','y'].includes(word.slice(0,1)))?"n":"";}
+
  Utils.prototype.applyBBCode = function(string){
   string=string.replace(/\[(\w*?) id=(\d+)\](.*?)\[\/id\]/g,"<span class='$1 link' value='$2' title='id : $2'>$3</span>");
   return string;
@@ -30,8 +34,7 @@ Utils.prototype.getSortedKeys = function(obj) {
 return sortedKeys
 }
 
-
-      Utils.prototype.drawChart = function(data,title) {
+ Utils.prototype.drawChart = function(data,title) {
         var data = google.visualization.arrayToDataTable(data);
         var options = {
           title: title,
@@ -42,4 +45,27 @@ return sortedKeys
         var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
 
         chart.draw(data, options);
+      }
+
+Utils.prototype.compareValues= function(key, order = 'asc') {
+        return function innerSort(a, b) {
+          if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
+            return 0;
+          }
+      
+          const varA = (typeof a[key] === 'string')
+            ? a[key].toUpperCase() : a[key];
+          const varB = (typeof b[key] === 'string')
+            ? b[key].toUpperCase() : b[key];
+      
+          let comparison = 0;
+          if (varA > varB) {
+            comparison = 1;
+          } else if (varA < varB) {
+            comparison = -1;
+          }
+          return (
+            (order === 'desc') ? (comparison * -1) : comparison
+          );
+        };
       }

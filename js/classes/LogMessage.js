@@ -1,4 +1,4 @@
-function LogMessage(type="general",message="Nothing to say",age=undefined,related=new Array()){
+function LogMessage(type="general",message="Nothing to say",related=new Array(),age=world.age){
     this.type=type;
     this.message=message;
     this.age=age;
