@@ -16,16 +16,18 @@ html+='<button id="begin" class="ml-5">Generate a new world</button>'
 html+='</div>'
 return html;}
 
-FrontBlock.prototype.graphPanel = function(min=0,max=100000,category){
-    let html='<select class="mt-3" id=chooseGraph>'
+FrontBlock.prototype.graphPanel = function(min=0,max=100000,interface="census",category){
+    let hiddenStyle="";
+    if(interface=="house"){hiddenStyle=' style="display:none;" '}
+    let html='<select class="mt-3"'+hiddenStyle+' id=chooseGraph>'
     html+='<option value="Medium Age">Medium Age</option>'
     html+='<option value="Total Money">Total Money</option>'
     html+='<option value="Total population">Total population</option>'
     html+="</select>"
-    html+="<label> Min</label>"
-    html+='<input type="number" id="graph-min" value='+min+' step=1 min=0 >'
-    html+="<label> Range of the graph  : Max</label>"
-    html+='<input type="number" id="graph-max" value='+max+' step=1 min=-1 >'
-    html+='<button id="graph-change" class="ml-3">Update values</button>'
+    html+='<label'+hiddenStyle+'> Range of the graph : Min</label>'
+    html+='<input'+hiddenStyle+' type="number" id="graph-min" value='+min+' step=1 min=0 >'
+    html+='<label'+hiddenStyle+'>Max</label>'
+    html+='<input '+hiddenStyle+'type="number" id="graph-max" value='+max+' step=1 min=-1 >'
+    html+='<button '+hiddenStyle+' id="graph-change" class="ml-3">Update values</button>'
     html+='<div id="curve_chart" style="width: 900px; height: 500px"></div>'
     return html;}

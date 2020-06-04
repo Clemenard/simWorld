@@ -34,7 +34,6 @@ $('body').on('click', '.timelapse',function(){
                 case 'timelapse-pause':  world.frameDuration="pause";
     }
     if($(this).attr('id')!="timelapse-pause" && formerDuration=="pause"){
-        console.log("replay")
         oneTurn();
     }
 })
@@ -50,13 +49,12 @@ $('body').on('change', '#chooseStat',function(){
 
 //get data about an human defined by id
 $('body').on('click', '#search-human',function(){
+    world.page=Number($(this).attr('value'))
     humanData(Number($('#id-human').val())) 
 })
 
-//get data about an human by clicking on it
-$('body').on('click', '.link',function(){
-    humanData(Number($(this).attr('value')))   
-})
+
+
 $('body').on('click', '#graph, #graph-change',function(){
     let min=$('#graph-min').val();
     if(!min){min=0;}
@@ -65,7 +63,7 @@ $('body').on('click', '#graph, #graph-change',function(){
     let category=$('#chooseGraph').val();
     if(!category){category="Medium Age";}
 
-    $('#myLogs').html(frontBlock.graphPanel(min,max,category))
+    $('#myLogs').html(frontBlock.graphPanel(min,max,"census",category))
  data=world.getDataGraph(category);
  google.charts.setOnLoadCallback(utils.drawChart(data,category));
 
@@ -74,7 +72,7 @@ $('body').on('change', '#chooseGraph',function(){
     let data=world.getDataGraph($('#chooseGraph').val());
     google.charts.setOnLoadCallback(utils.drawChart(data,$('#chooseGraph').val()));
     })
-
+//get data about an human by clicking on it
 $('body').on('click', '.link',function(){
     humanData(Number($(this).attr('value')))   
 })
@@ -106,7 +104,7 @@ $('body').on('click', '#census, #begin',function(){
             if(index!=0){childString+=", ";}
 childString+=child.display("child");
         })}
-        html+="<tr><td>"+father.surname+"</td>";
+        html+="<tr><td>"+father.isNoble()+''+father.surname+"</td>";
         html+="<td>"+father.display()+"</td>";
         html+="<td>"+wife+"</td>";
         html+="<td>"+childString+"</td>";   
@@ -131,6 +129,7 @@ childString+=child.display("child");
 
 function humanData(id){
     try{
+        world.page.house=id;
     let search=world.getHumanById(id);
     let maleAncestors=search.getAncestors("male",new Array());
     let femaleAncestors=search.getAncestors("female",new Array());
@@ -145,14 +144,23 @@ function humanData(id){
         html+='<p>'+element.display("history")+'</p>'; 
     })
     html+="<h2> Life history</h2>";
+    html+="<h2 id='champcache' style='display:none;' data-id='"+id+"'>champcache</h2>";
     search.getRelatedLogs().forEach(element=>{
         html+=element.display();  
     }) 
     if(search.getHouse(true)){
-    html+="<h3>My home has "+search.getHouse().gold+" thunes.</h3>";}
+    html+="<h3>My home has "+search.getHouse().gold+" thunes and is "+search.getHouse().state+".</h3>";}
     html=utils.applyBBCode(html);
-    $('#myLogs').html(html);}
+    $('#myLogs').html(html);
+    let data=world.getHouseGraph(search.id);
+    let max=(search.logDay('death'))?search.logDay('death'):10000000
+    let min=(search.logDay('birth'))?search.logDay('birth'):0
+    let htm=frontBlock.graphPanel(min,max,"house","")
+    $('#myLogs').append(htm)
+ google.charts.setOnLoadCallback(utils.drawChart(data,"House"));
+}
     catch(error){
+        console.log('error a pu maison')
         let logMessage= new LogMessage("error",error,[])
         world.logsList.push(logMessage);
     }

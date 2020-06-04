@@ -3,7 +3,7 @@ function House(isGenerate=false,leader){
     this.state="common";
     this.id=lastHouseId;
     if(isGenerate==true){
-        this.gold=utils.getRandomArbitrary(20,200);
+        this.gold=utils.getRandomArbitrary(20,250);
         leader.house=lastHouseId;
     }
     else{
@@ -29,10 +29,7 @@ House.prototype.newMember= function(human){
     return lastHouseId;
 }
 House.prototype.isEmpty= function(){
-    let myself=this;
-    let housekeepers=world.aliveHumanList.filter(function(ele){
-        return (ele.house==myself.id );
-    });
+    let housekeepers=this.getHousemembers()
     if(housekeepers.length>1){
         return false;}
     return true;
@@ -68,29 +65,43 @@ House.prototype.payTax= function(town=''){
     else if(this.gold>20){this.gold-=Math.floor(this.gold*0.05)}
 
     //house taxes
-    if(this.state=="common"){this.gold-=24}
-    else if(this.state=="noble"){this.gold-=36}
-
+    if(this.state=="noble"){this.gold-=36}
+    else{this.gold-=24}
+    if(this.gold<0){
+        this.gold=0;
+    this.robbing();}
     //state change
 this.checkNobility();
-    if(this.gold<100 && this.state=="noble"){
-        this.state="common";
-        let logMessage= new LogMessage("rank",this.leader.display("job")+" became a commoner.",[this.leader.id])
-        world.logsList.push(logMessage);
-        if(/de /.test(this.leader.surname)){
-        this.leader.surname=this.leader.surname.slice(3);}}
     return true;
 }
 House.prototype.checkNobility= function(){
-if(this.gold>300 ){
-    this.gold-=50;
-this.state="noble";
-let logMessage= new LogMessage("rank",this.leader.display("job")+" became a noble.",[this.leader.id])
-world.logsList.push(logMessage);
-if(/de /.test(this.leader.surname)){}
-else
-{this.leader.surname="de "+this.leader.surname;}
-return true;
-}
+if(this.gold>400 && this.state=="common"){
+    this.gold-=100;
+    this.state="noble";
+    let logMessage= new LogMessage("rank",this.leader.display("job")+" became a noble.",[this.leader.id])
+    world.logsList.push(logMessage);}
+if(this.gold<200 && this.state=="noble"){
+    this.state="common";
+    let logMessage= new LogMessage("rank",this.leader.display("job")+" became a commoner.",[this.leader.id])
+    world.logsList.push(logMessage);}
 return false;
+}
+House.prototype.robbing = function(){
+    let robbed= world.getNobleHouse('random');
+    try{
+    if(0.5>Math.random())
+    {this.gold+=50;robbed.gold-=50;}
+    else{
+    let hanged=this.getHousemembers()[0];
+    hanged.death();
+    let logMessage= new LogMessage("crime",hanged.display("job")+" get hanged for robbery.",[hanged.id]);
+    world.logsList.push(logMessage);}}
+    catch(e){
+        console.log(e)
+    }
+}
+
+House.prototype.getHousemembers = function(){
+    let myself=this;
+    return world.aliveHumanList.filter(function(ele){ return ele.house == myself.id; })
 }

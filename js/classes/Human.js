@@ -67,11 +67,10 @@ catch(error){
     world.logsList.push(logMessage);
 }
 }
-Human.prototype.death= function(deathList){ 
+Human.prototype.death= function(){ 
     try{
-    if(this.deathProbability()<this.age) {
         let logWidow=false;
-        deathList.push(this);
+        world.deadHumanList.push(this);
         let house=this.getHouse(true)
         if(house && house.isEmpty()){
 house.inheritance();
@@ -79,14 +78,17 @@ house.inheritance();
         if(this.pairedWith>0){
         let partner= world.getHumanById(this.pairedWith);
         partner.pairedWith=-partner.pairedWith;
-        logWidow= new LogMessage("widow",partner.display("fullname")+", became a widow"+utils.genderMark(partner.sex,"er")+" at the age of "+partner.getAge()+".",[partner.id]);}
-        let logDeath= new LogMessage("death",this.display("fullname")+", died at the age of "+this.getAge()+".",[this.id]);
-        this.age=-this.age;
-        return {'logDeath':logDeath,'logWidow':logWidow};
+        logWidow= new LogMessage("widow",partner.display("fullname")+", became a widow"+utils.genderMark(partner.sex,"er")+" at the age of "+partner.getAge()+".",[partner.id]);
+        world.logsList.push(logWidow);
     }
-    return false;}catch(error){
-        let logMessage= new LogMessage("error",error,[])
-        world.logsList.push(logMessage);
+        let logDeath= new LogMessage("death",this.display("fullname")+", died at the age of "+this.getAge()+".",[this.id]);
+        if(world.page==this.id){$('#graph-max').val(Math.floor(world.age/12))}
+        world.logsList.push(logDeath);
+        this.age=-this.age;
+        return true;
+}catch(error){
+        console.log(error)
+        return false;
     }
 }
 Human.prototype.birthProbability= function(){   
@@ -155,7 +157,7 @@ Human.prototype.getAge= function(){
 Human.prototype.getJob= function(){
     let job=this.JOB_LIST[utils.getRandomArbitrary(0,this.JOB_LIST.length-1)]
     if(this.job){
-    let logMessage= new LogMessage("job",this.display('job')+" became a"+utils.aOrAn(job.name)+" "+job.name,[this.id])
+    let logMessage= new LogMessage("job",this.display('job')+" became a"+utils.aOrAn(job.name)+" "+job.name+', earning '+job.salary+' gold',[this.id])
     world.logsList.push(logMessage);}
     return job;
 }
@@ -171,19 +173,19 @@ Human.prototype.display= function(style="basic"){
     let html='';
     switch(style){
         case "history":
-            html=utils.genderMark(this.sex,"name")+' ['+this.sex+' id='+this.id+']'+this.surname.toUpperCase()+" "+this.name+"[/id], "+this.logDay('birth')+"-"+this.logDay('death')
+            html=utils.genderMark(this.sex,"name")+' ['+this.sex+' id='+this.id+']'+this.isNoble().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id], "+this.logDay('birth')+"-"+this.logDay('death')
             break;
             case "birth":
-            html=' ['+this.sex+' id='+this.id+']'+this.surname.toUpperCase()+" "+this.name+"[/id]"
+            html=' ['+this.sex+' id='+this.id+']'+this.isNoble().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id]"
             break;
             case "child":
             html="["+this.sex+" id="+this.id+"]"+this.name+"[/id], "+this.getAge()
             break;
             case "fullname":
-                html= "["+this.sex+" id="+this.id+"]"+this.surname.toUpperCase()+" "+this.name+"[/id], "+this.getAge()+", "+this.job.name;
+                html= "["+this.sex+" id="+this.id+"]"+this.isNoble().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id], "+this.getAge()+", "+this.job.name;
             break;
             case "job":
-            html='['+this.sex+' id='+this.id+']'+this.surname.toUpperCase()+" "+this.name+"[/id] "
+            html='['+this.sex+' id='+this.id+']'+this.isNoble().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id] "
             break;
         default: 
         html= "["+this.sex+" id="+this.id+"]"+this.name+"[/id], "+this.getAge()+", "+this.job.name;
@@ -201,6 +203,14 @@ if(ancestor){
 }
 else{return array;}
 }
+Human.prototype.isNoble= function(){try{
+    return particle= (this.getHouse().state=='noble')?"de ":''
+    }
+    catch(error){
+        let logMessage= new LogMessage("error",error,[])
+        world.logsList.push(logMessage);
+        return '';
+    }}
 
 Human.prototype.JOB_LIST = [
     {name:"boss",salary:4},

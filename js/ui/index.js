@@ -27,12 +27,9 @@ function oneTurn(){
            element.wedding();
         }
         //death
-        let logDeath=element.death(world.deadHumanList);
-        if(logDeath){
-            world.logsList.push(logDeath.logDeath);
-        if(logDeath.logWidow){
-            world.logsList.push(logDeath.logWidow);
-        }}
+        if(element.deathProbability()<element.age){
+        element.death();
+        }
 
         //birth
         if(element.age>16*12 && element.age<50*12){
@@ -49,8 +46,16 @@ world.age++;
 if(world.age%12==0){
     world.payday();
     if($('#curve_chart').css("display")=='block' && ($('#graph-max').val()<0 || $('#graph-max').val()*12>world.age)){
-        let data=world.getDataGraph($('#chooseGraph').val());
-    google.charts.setOnLoadCallback(utils.drawChart(data,$('#chooseGraph').val()));
+        style='census';
+        if($('#champcache').html()=='champcache'){
+            console.log($('#champcache').attr('data-id'))
+            humanData($('#champcache').attr('data-id'))
+        }
+        else{
+            let data=world.getDataGraph($('#chooseGraph').val());
+            let title=$('#chooseGraph').val()
+             google.charts.setOnLoadCallback(utils.drawChart(data,title));
+        }
     }
     //world.archive('human','house');
     world.census.human.push(new Array());

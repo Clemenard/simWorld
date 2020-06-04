@@ -4,6 +4,7 @@ function World(duration=50,startPop=100,maxPop=10000,frameDuration=1000){
     this.duration=(duration>1)?duration:50;
     this.startPop=(startPop>1)?startPop:100;
     this.maxPop=(maxPop>10)?maxPop:10000;
+    this.page=0;
     this.frameDuration=(frameDuration>5)?frameDuration:20;
     this.aliveHumanList=new Array();
     this.deadHumanList=new Array();
@@ -31,6 +32,13 @@ World.prototype.getHousesBySurname= function(surname,year=-1){
     if (search){return search;}}
     let humanList=this.aliveHumanList.concat(this.deadHumanList);
     return this.houseList.filter(function(ele){ return ele.leader.surname == surname; });
+}
+
+World.prototype.getNobleHouse= function(option){
+    let nobles= search=this.houseList.filter(function(ele){ return ele.state == "noble"; });
+    if(option=="random"){
+        return nobles[utils.getRandomArbitrary(0,nobles.length-1)]}
+    return nobles
 }
 
 World.prototype.getMainFamilies= function(year){
@@ -78,21 +86,41 @@ switch(graphs){
 return data;
 }
 
+World.prototype.getHouseGraph= function(human){
+    let data=[['Year','Gold']];
+    let dataRow=new Array();
+    let age=-1;
+    let gold=0;
+world.census.human.forEach((ele,i,childs) =>{
+    ele.forEach((e,j,childs) => {
+     if( e.id==human){
+        age=i;
+        gold=world.census.house[i].filter(function(house){ return (house.id == e.house ); })[0].gold;} 
+          
+    });
+    if(age>=0 &&  typeof age=="number"){
+    dataRow=[age,gold];
+    data.push(dataRow);
+    age=-1;
+}
+});
+return data;
+}
+
 World.prototype.payday= function(){
-    try{
     this.aliveHumanList.forEach((human,index,childs)=>{
-        let house = human.getHouse();
-        if(house){
-        house.gold+=human.job.salary;}
+        try{
+        var house = human.getHouse();
+        
+        house.gold+=human.job.salary*12;}
+        catch(error){
+            console.log("error")
+        }
         
     });
     this.houseList.forEach((house,index,childs)=>{
         house.payTax();   
     });
 return true;}
-catch(error){
-    let logMessage= new LogMessage("error",error,[])
-    world.logsList.push(logMessage);
-}
-}
+
 
