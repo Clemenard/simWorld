@@ -12,7 +12,10 @@ function World(duration=50,startPop=100,maxPop=10000,frameDuration=1000){
     this.logsList=new Array();
     this.census={"human":new Array(),"house":new Array()};
     this.age=0;
-    for(let i=0;i<this.startPop;i++){
+    let avatar=new Avatar()
+        this.aliveHumanList.push(avatar);
+        this.houseList.push(new House(true,avatar));
+    for(let i=1;i<this.startPop;i++){
         let human=new Human(true)
         this.aliveHumanList.push(human);
         this.houseList.push(new House(true,human));

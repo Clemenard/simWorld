@@ -5,6 +5,7 @@ function Human(isGenerate=false,father,mother){
         this.mother="anonymous";
         this.job=this.getJob();
         this.house=0;
+        this.avatar=false;
     }
     else{
 this.age=0;
@@ -12,7 +13,9 @@ if(father){
 this.father=father.id;
 this.house=father.house;
 this.mother=mother.id;
-this.job={name:"student",salary:0};}
+this.job={name:"student",salary:0};
+this.avatar=(father.avatar||mother.avatar)?true:false;
+}
     }
     this.sex=(Math.random()>0.5)?"male":"female";
     this.name=this.getNamed();
@@ -171,25 +174,26 @@ Human.prototype.logDay= function(type){
 
 Human.prototype.display= function(style="basic"){
     let html='';
+    let setClasses=(this.avatar)?'avatar '+this.sex:' '+this.sex;
     switch(style){
         case "history":
-            html=utils.genderMark(this.sex,"name")+' ['+this.sex+' id='+this.id+']'+this.isNoble().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id], "+this.logDay('birth')+"-"+this.logDay('death')
+            html=utils.genderMark(this.sex,"name")+' ['+setClasses+' id='+this.id+']'+this.isNoble().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id], "+this.logDay('birth')+"-"+this.logDay('death')
             break;
             case "birth":
-            html=' ['+this.sex+' id='+this.id+']'+this.isNoble().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id]"
+            html=' ['+setClasses+' id='+this.id+']'+this.isNoble().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id]"
             break;
             case "child":
-            html="["+this.sex+" id="+this.id+"]"+this.name+"[/id], "+this.getAge()
+            html="["+setClasses+" id="+this.id+"]"+this.name+"[/id], "+this.getAge()
             break;
             case "fullname":
-                html= "["+this.sex+" id="+this.id+"]"+this.isNoble().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id], "+this.getAge()+", "+this.job.name;
+                html= "["+setClasses+" id="+this.id+"]"+this.isNoble().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id], "+this.getAge()+", "+this.job.name;
             break;
             case "job":
-            html='['+this.sex+' id='+this.id+']'+this.isNoble().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id] "
+            html='['+setClasses+' id='+this.id+']'+this.isNoble().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id] "
             break;
         default: 
-        html= "["+this.sex+" id="+this.id+"]"+this.name+"[/id], "+this.getAge()+", "+this.job.name;
-            if(this.age<0){html= "["+this.sex+" id="+this.id+"]"+this.name+"[/id]";}
+        html= "["+setClasses+" id="+this.id+"]"+this.name+"[/id], "+this.getAge()+", "+this.job.name;
+            if(this.age<0){html= "["+setClasses+" id="+this.id+"]"+this.name+"[/id]";}
             break;}
             return html;
     }

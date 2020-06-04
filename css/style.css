@@ -4,6 +4,9 @@
 .female{
     color:pink;
 }
+.avatar{
+    background-color:goldenrod;
+}
 .nav-link,#homepage, .link{
     cursor: pointer;
 }

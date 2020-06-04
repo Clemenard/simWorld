@@ -27,7 +27,7 @@ function oneTurn(){
            element.wedding();
         }
         //death
-        if(element.deathProbability()<element.age){
+        if(element.deathProbability()<element.age &&(!element.avatar || element.age>620) ){
         element.death();
         }
 

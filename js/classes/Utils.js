@@ -50,7 +50,7 @@ Utils.prototype.aOrAn= function(word){
   return(['a','e','i','o','u','y'].includes(word.slice(0,1)))?"n":"";}
 
  Utils.prototype.applyBBCode = function(string){
-  string=string.replace(/\[(\w*?) id=(\d+)\](.*?)\[\/id\]/g,"<span class='$1 link' value='$2' title='id : $2'>$3</span>");
+  string=string.replace(/\[(avatar)? (\w*?) id=(\d+)\](.*?)\[\/id\]/g,"<span class='$1 $2 link' value='$3' title='id : $3'>$4</span>");
   return string;
 }
 

@@ -3,7 +3,7 @@ function House(isGenerate=false,leader){
     this.state="common";
     this.id=lastHouseId;
     if(isGenerate==true){
-        this.gold=utils.getRandomArbitrary(20,250);
+        this.gold= (leader.avatar)?utils.getRandomArbitrary(150,250):utils.getRandomArbitrary(20,250);
         leader.house=lastHouseId;
     }
     else{
