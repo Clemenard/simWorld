@@ -6,4 +6,4 @@ function LogMessage(type="general",message="Nothing to say",related=new Array(),
 }
 LogMessage.prototype.display= function(){
     let display=utils.applyBBCode(this.message);
-    return "<strong>"+(this.age%12+1)+""+utils.numberParticle(this.age%12+1)+" month of the "+Math.floor(this.age/12)+" year</strong> : "+display+"<br>";}
+    return "<strong>"+utils.getDate(this.age)+"</strong> : "+display+"<br>";}

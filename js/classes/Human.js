@@ -57,13 +57,14 @@ if(partner && utils.getRandomArbitrary(0,60)==1){
     house.gold+=bonusGold;
     house.checkNobility();
     world.houseList.push(house);
-    let logMessage= new LogMessage("marriage",husband.display()+" get married with "+wife.display()+". They begin with "+house.gold+" gold.",[husband.id,wife.id])
+    let logMessage= new LogMessage("wedding",husband.display("fullname")+" get married with "+wife.display()+". They begin with "+house.gold+" gold.",[husband.id,wife.id])
     world.logsList.push(logMessage);
     wife.surname=husband.surname;
     return  true;}
     return false;}
 catch(error){
-    console.log(error)
+    let logMessage= new LogMessage("error",error,[])
+    world.logsList.push(logMessage);
 }
 }
 Human.prototype.death= function(deathList){ 
@@ -78,13 +79,14 @@ house.inheritance();
         if(this.pairedWith>0){
         let partner= world.getHumanById(this.pairedWith);
         partner.pairedWith=-partner.pairedWith;
-        logWidow= new LogMessage("widow",partner.display()+" became a widow"+utils.genderMark(partner.sex,"er")+" at the age of "+partner.getAge()+".",[partner.id]);}
-        let logDeath= new LogMessage("death",this.display()+" died at the age of "+this.getAge()+".",[this.id]);
+        logWidow= new LogMessage("widow",partner.display("fullname")+", became a widow"+utils.genderMark(partner.sex,"er")+" at the age of "+partner.getAge()+".",[partner.id]);}
+        let logDeath= new LogMessage("death",this.display("fullname")+", died at the age of "+this.getAge()+".",[this.id]);
         this.age=-this.age;
         return {'logDeath':logDeath,'logWidow':logWidow};
     }
     return false;}catch(error){
-        console.log(error)
+        let logMessage= new LogMessage("error",error,[])
+        world.logsList.push(logMessage);
     }
 }
 Human.prototype.birthProbability= function(){   
@@ -125,7 +127,7 @@ Human.prototype.birth= function(){
             mother.pregnancyState=0;
         let newborn= new Human(false,father,mother);
         newborn.surname= father.surname;
-        let logMessage= new LogMessage("birth",newborn.display("birth")+" is born from "+mother.display()+" and "+father.display()+".",[newborn.id,mother.id,father.id])
+        let logMessage= new LogMessage("birth",newborn.display("birth")+" is born from "+mother.display()+", and "+father.display()+".",[newborn.id,mother.id,father.id])
         return {"newborn":newborn,"logBirth":logMessage};}}
         return false;
     }
@@ -172,7 +174,13 @@ Human.prototype.display= function(style="basic"){
             html=utils.genderMark(this.sex,"name")+' ['+this.sex+' id='+this.id+']'+this.surname.toUpperCase()+" "+this.name+"[/id], "+this.logDay('birth')+"-"+this.logDay('death')
             break;
             case "birth":
-            html=' ['+this.sex+' id='+this.id+']'+this.name+"[/id]"
+            html=' ['+this.sex+' id='+this.id+']'+this.surname.toUpperCase()+" "+this.name+"[/id]"
+            break;
+            case "child":
+            html="["+this.sex+" id="+this.id+"]"+this.name+"[/id], "+this.getAge()
+            break;
+            case "fullname":
+                html= "["+this.sex+" id="+this.id+"]"+this.surname.toUpperCase()+" "+this.name+"[/id], "+this.getAge()+", "+this.job.name;
             break;
             case "job":
             html='['+this.sex+' id='+this.id+']'+this.surname.toUpperCase()+" "+this.name+"[/id] "

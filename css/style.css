@@ -4,7 +4,7 @@
 .female{
     color:pink;
 }
-.link,#homepage{
+.nav-link,#homepage{
     cursor: pointer;
 }
 #timelapse{

@@ -10,6 +10,35 @@ Utils.prototype.numberParticle= function (number){
     default: return "th";
   }
 }
+
+Utils.prototype.getDate= function(age){
+  let year = Math.floor(age/12);
+  let month=utils.getMonth(age%12+1);
+  let date=this.capitalize(month)+" "+year
+  return date;
+}
+
+Utils.prototype.getMonth= function(month){
+  switch(month){
+    case 1:return "january";
+    case 2:return "febuary";
+    case 3:return "march";
+    case 4:return "april";
+    case 5:return "may";
+    case 6:return "june";
+    case 7:return "july";
+    case 8:return "august";
+    case 9:return "september";
+    case 10:return "october";
+    case 11:return "november";
+    case 12:return "december";
+  }
+  return (month+" "+year);
+}
+Utils.prototype.capitalize= function(s){
+  if (typeof s !== 'string') return ''
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
 Utils.prototype.genderMark= function(sex,kind){
   switch(kind){
     case "er": return (sex=="male")?"er":"";

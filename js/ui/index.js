@@ -13,7 +13,7 @@ google.charts.load('current', {'packages':['corechart']});
 
 
 function oneTurn(){
-    let timeLog=new LogMessage("time",world.age+" month of game. There is "+world.aliveHumanList.length+' humans.')
+    let timeLog=new LogMessage("time",utils.getDate(world.age)+". There is "+world.aliveHumanList.length+' humans.')
     $('#calendar').html(timeLog.message);
     $('#myLogs').append(timeLog);
     world.logsList.push(timeLog);
@@ -48,6 +48,10 @@ world.houseList=world.houseList.filter(function(ele){ return ele.gold >= 0; });
 world.age++;
 if(world.age%12==0){
     world.payday();
+    if($('#curve_chart').css("display")=='block' && ($('#graph-max').val()<0 || $('#graph-max').val()*12>world.age)){
+        let data=world.getDataGraph($('#chooseGraph').val());
+    google.charts.setOnLoadCallback(utils.drawChart(data,$('#chooseGraph').val()));
+    }
     //world.archive('human','house');
     world.census.human.push(new Array());
     world.census.house.push(new Array());

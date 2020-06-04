@@ -20,11 +20,12 @@ FrontBlock.prototype.graphPanel = function(min=0,max=100000,category){
     let html='<select class="mt-3" id=chooseGraph>'
     html+='<option value="Medium Age">Medium Age</option>'
     html+='<option value="Total Money">Total Money</option>'
+    html+='<option value="Total population">Total population</option>'
     html+="</select>"
-    html+="<label> Range of the graph  : Max</label>"
-    html+='<input type="number" id="graph-max" value='+max+' step=1 min=-1 >'
     html+="<label> Min</label>"
     html+='<input type="number" id="graph-min" value='+min+' step=1 min=0 >'
+    html+="<label> Range of the graph  : Max</label>"
+    html+='<input type="number" id="graph-max" value='+max+' step=1 min=-1 >'
     html+='<button id="graph-change" class="ml-3">Update values</button>'
     html+='<div id="curve_chart" style="width: 900px; height: 500px"></div>'
     return html;}

@@ -19,21 +19,35 @@
     <button id="timelapse-play50" class="timelapse">Play x50</button>
 </div>
     <div id="navbar" style='display:none;'>
-        <select id="chooseStat">
-            <option value="birth">Births</option>
-            <option value="death">Deaths</option>
-            <option value="marriage">Weddings</option>
-            <option value="inheritance">Inheritances</option>
-            <option value="job">Job</option>
-            <option value="rank">Rank</option>
-        </select><br>
-        <label for="year">Choose a year</label>
-        <input type="number" id="year" value=-1 step=1 min=-1>
-        <button id="search">Search</button><br>
-        <label for="id-human">Human (id)</label>
-        <input type="number" id="id-human" value=0 step=1 min=0>
-        <button id="search-human">Search this human</button><br>
-        <button id="all-human">Census</button><button id="graph">Graph</button>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <input type="number" id="year" value=-1 step=1 min=-1>
+                <label class="nav-link" for="year">Choose a year</label>
+              </li>
+              <li class="nav-item">
+                <input type="number" id="id-human" value=0 step=1 min=0>
+                <label class="nav-link" for="id-human" id="search-human">Search this human (id)</label>
+              </li>
+            <li class="nav-item">
+                <select class="nav-link" id="chooseStat">
+                    <option value="all">All logs</option>
+                    <option value="birth">Births</option>
+                    <option value="death">Deaths</option>
+                    <option value="wedding">Weddings</option>
+                    <option value="inheritance">Inheritances</option>
+                    <option value="job">Job</option>
+                    <option value="rank">Rank</option>
+                    <option value="time">Time</option>
+                    <option value="errors">Errors</option>
+                </select>
+            </li>
+            <li class="nav-item">
+              <span id="census" class="nav-link active">Census</a>
+            </li>
+            <li class="nav-item">
+              <span class="nav-link" id="graph">Graphs</a>
+            </li>
+          </ul>
     </div>
     <div id="myLogs">
     </div>

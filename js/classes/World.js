@@ -41,23 +41,37 @@ World.prototype.getMainFamilies= function(year){
     });
     return mainFamilies;
 } 
+ 
 World.prototype.getDataGraph= function(graphs){
     let data= new Array();
     let header=['Year'].concat(graphs)
-    data.push(header)
+    switch(graphs){
+        case "Medium Age":    data.push(header.concat(['Eldest']));break;
+        case "Total Money":    data.push(header);break;
+        case "Total population":        data.push(header.concat(['0-15 yo','15-30 yo','30-45 yo','45-60 yo','60+ yo']));break;
+    }
     this.census.human.forEach((element,i,childs)=>{
         let dataRow = [i];
-        graphs.forEach((elt,j,childs)=>{
-switch(elt){
-    case "Medium Age": dataRow.push(element.reduce((accumulator, currentValue) => {
-        return (accumulator + currentValue.age);},0)/(element.length*12));
+switch(graphs){
+    case "Medium Age": 
+        dataRow.push(element.reduce((accumulator, currentValue) => {
+            return (accumulator + currentValue.age);},0)/(element.length*12));
+        dataRow.push(element.reduce((accumulator, currentValue) => {
+            return (accumulator > currentValue.age ? accumulator : currentValue.age);},0)/12);
         break;
-        case "Total Money": dataRow.push(world.census.house[i].reduce((accumulator, currentValue) => {
+    case "Total Money": 
+        dataRow.push(world.census.house[i].reduce((accumulator, currentValue) => {
             return (accumulator + currentValue.gold);},0));
-            break;
+        break;
+    case "Total population":
+        dataRow.push(element.length);
+        dataRow.push(element.filter(function(ele){ return ele.age <= 180; }).length);
+        dataRow.push(element.filter(function(ele){ return (ele.age > 180 && ele.age<=360); }).length);
+        dataRow.push(element.filter(function(ele){ return (ele.age > 360 && ele.age<=540); }).length);
+        dataRow.push(element.filter(function(ele){ return (ele.age > 540 && ele.age<=720); }).length);
+        dataRow.push(element.filter(function(ele){ return (ele.age > 720 ); }).length);
+        break;
 }
-});
-
         data.push(dataRow)
     
 });
@@ -77,7 +91,8 @@ World.prototype.payday= function(){
     });
 return true;}
 catch(error){
-    console.log(error)
+    let logMessage= new LogMessage("error",error,[])
+    world.logsList.push(logMessage);
 }
 }
 

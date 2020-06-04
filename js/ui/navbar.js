@@ -1,4 +1,4 @@
-//generate new world
+
 $('body').on('click', '#homepage',function(){
     $('#myLogs').html(frontBlock.homePanel());
     $('#navbar').hide();
@@ -6,8 +6,8 @@ $('body').on('click', '#homepage',function(){
     world.frameDuration="pause";
 })
 
+//generate new world
 $('body').on('click', '#begin',function(){
-
     $('#navbar').show();
     $('#timelapse').show();
     world= new World(Number($('#age').val())*12,Number($('#pop-start').val()),Number($('#pop-max').val()));
@@ -40,14 +40,12 @@ $('body').on('click', '.timelapse',function(){
 })
 
 //get logs for a kind of event
-$('body').on('click', '#search',function(){
+$('body').on('change', '#chooseStat',function(){
     $('#myLogs').html('');
-    if($('#chooseStat').val()=="child-number"){}
-    else{
     world.logsList.forEach(element => {
         if((Math.floor(element.age/12) == Number($('#year').val()) || Number($('#year').val())==-1) && element.type==$('#chooseStat').val()){
         $('#myLogs').append(element.display()) }
-    });}
+    });
 })
 
 //get data about an human defined by id
@@ -68,13 +66,13 @@ $('body').on('click', '#graph, #graph-change',function(){
     if(!category){category="Medium Age";}
 
     $('#myLogs').html(frontBlock.graphPanel(min,max,category))
- data=world.getDataGraph([category]);
+ data=world.getDataGraph(category);
  google.charts.setOnLoadCallback(utils.drawChart(data,category));
 
 })
 $('body').on('change', '#chooseGraph',function(){
-    let data=world.getDataGraph([$('#chooseGraph').val()]);
-    google.charts.setOnLoadCallback(utils.drawChart(data,'Medium Age'));
+    let data=world.getDataGraph($('#chooseGraph').val());
+    google.charts.setOnLoadCallback(utils.drawChart(data,$('#chooseGraph').val()));
     })
 
 $('body').on('click', '.link',function(){
@@ -82,7 +80,7 @@ $('body').on('click', '.link',function(){
 })
 
 //get a table of all humans
-$('body').on('click', '#all-human',function(){
+$('body').on('click', '#census, #begin',function(){
     let html=''
     let year=(Number($('#year').val())*12>world.age || Number($('#year').val())<0)?(world.age-world.age%12)/12:Number($('#year').val());
     let list=(year==(world.age-world.age%12)/12)?world.houseList:world.census.house[year];
@@ -106,7 +104,7 @@ $('body').on('click', '#all-human',function(){
             childsAtHome.forEach((child,index,childs)=>{
             if(child.logDay("birth")>year*12){return;}
             if(index!=0){childString+=", ";}
-childString+=child.display();
+childString+=child.display("child");
         })}
         html+="<tr><td>"+father.surname+"</td>";
         html+="<td>"+father.display()+"</td>";
@@ -154,8 +152,9 @@ function humanData(id){
     html+="<h3>My home has "+search.getHouse().gold+" thunes.</h3>";}
     html=utils.applyBBCode(html);
     $('#myLogs').html(html);}
-catch(error){
-    console.log(error)
-}
+    catch(error){
+        let logMessage= new LogMessage("error",error,[])
+        world.logsList.push(logMessage);
+    }
     
 }
