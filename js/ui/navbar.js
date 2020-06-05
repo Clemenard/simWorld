@@ -1,9 +1,15 @@
+let town=($('#chooseTown').val()>=0)?$('#chooseTown').val():false;
+let logs=($('#chooseStat').val()!="all")?$('#chooseStat').val():false;
 
 $('body').on('click', '#homepage',function(){
     $('#myLogs').html(frontBlock.homePanel());
     $('#navbar').hide();
     $('#timelapse').hide();
-    world.frameDuration="pause";
+    if(world){
+    world.frameDuration="pause";}
+})
+$('body').on('click', '#changelog',function(){
+    $('#myLogs').html(frontBlock.changelog());
 })
 
 //generate new world
@@ -12,13 +18,13 @@ $('body').on('click', '#begin',function(){
     $('#timelapse').show();
     world= new World(Number($('#age').val())*12,Number($('#pop-start').val()),Number($('#pop-max').val()));
     $('#myLogs').html('');
-    world.census.human.push(new Array());
-    world.aliveHumanList.forEach(element => {
-        world.census.human[world.census.human.length-1].push(jQuery.extend({}, element));
+    dc.census.human.push(new Array());
+    dc.aliveHumanList.forEach(element => {
+        dc.census.human[dc.census.human.length-1].push(jQuery.extend({}, element));
     });
-    world.census.house.push(new Array());
-    world.houseList.forEach(element => {
-        world.census.house[world.census.house.length-1].push(jQuery.extend({}, element));
+    dc.census.house.push(new Array());
+    dc.houseList.forEach(element => {
+        dc.census.house[dc.census.house.length-1].push(jQuery.extend({}, element));
     });
 oneTurn();
 })
@@ -40,17 +46,63 @@ $('body').on('click', '.timelapse',function(){
 
 //get logs for a kind of event
 $('body').on('change', '#chooseStat',function(){
+    logs=($('#chooseStat').val()!="all")?$('#chooseStat').val():false;
+    console.log(logs)
+    console.log(town)
+    world.page="logs"
     $('#myLogs').html('');
-    world.logsList.forEach(element => {
-        if((Math.floor(element.age/12) == Number($('#year').val()) || Number($('#year').val())==-1) && element.type==$('#chooseStat').val()){
-        $('#myLogs').append(element.display()) }
+    dc.logsList.forEach(element => {let cTown=element.town==$('#chooseTown').val()
+    let cLogs=element.type==$('#chooseStat').val()
+    let condition=(Math.floor(element.age/12) == Number($('#year').val()) || Number($('#year').val())==-1)
+    if (town && logs){
+        condition= condition && cLogs && cTown
+        }
+        else if(town){
+            condition= condition  && cTown
+        }
+        else if(logs){
+        condition= condition && cLogs }
+        if(condition){$('#myLogs').append(element.display());}
+
     });
+})
+
+//get town to display stats
+$('body').on('change', '#chooseTown',function(){
+    town=($('#chooseTown').val()>=0)?$('#chooseTown').val():false;
+    console.log(logs)
+    console.log(town)
+    if(world.page=="logs"){
+    $('#myLogs').html('');
+    dc.logsList.forEach(element => {
+        let cTown=element.town==$('#chooseTown').val()
+        let cLogs=element.type==$('#chooseStat').val()
+        let condition=(Math.floor(element.age/12) == Number($('#year').val()) || Number($('#year').val())==-1)
+        if (town && logs){
+            condition= condition && cLogs && cTown
+            }
+            else if(town){
+                condition= condition  && cTown
+            }
+            else if(logs){
+            condition= condition && cLogs }
+            if(condition){$('#myLogs').append(element.display());}
+        
+        
+
+    });}
 })
 
 //get data about an human defined by id
 $('body').on('click', '#search-human',function(){
     world.page=Number($(this).attr('value'))
     humanData(Number($('#id-human').val())) 
+})
+
+//get data about an human by clicking on it
+$('body').on('click', '.link',function(){
+    world.page=Number($(this).attr('value'))
+    humanData(Number($(this).attr('value')))   
 })
 
 
@@ -72,20 +124,22 @@ $('body').on('change', '#chooseGraph',function(){
     let data=world.getDataGraph($('#chooseGraph').val());
     google.charts.setOnLoadCallback(utils.drawChart(data,$('#chooseGraph').val()));
     })
-//get data about an human by clicking on it
-$('body').on('click', '.link',function(){
-    humanData(Number($(this).attr('value')))   
-})
 
 //get a table of all humans
-$('body').on('click', '#census, #begin',function(){
+$('body').on('click', '#census',function(){
     let html=''
-    let year=(Number($('#year').val())*12>world.age || Number($('#year').val())<0)?(world.age-world.age%12)/12:Number($('#year').val());
-    let list=(year==(world.age-world.age%12)/12)?world.houseList:world.census.house[year];
-
+    let year=(Number($('#year').val())*12>dc.age || Number($('#year').val())<0)?(dc.age-dc.age%12)/12:Number($('#year').val());
+    let list=(year==(dc.age-dc.age%12)/12)?dc.houseList:dc.census.house[year];
+    if(town){
+    list=list.filter(function(ele){return (ele.town==$('#chooseTown').val());});}
     list=list.sort(utils.compareValues('gold', 'desc'))
 
-    html+='<h1> Census of the year '+year+'</h1>';
+    if(town){
+        html+='<h1> Census of the year '+year+' in '+dc.TOWN_NAME_LIST[$('#chooseTown').val()]+'</h1>';
+    }
+        else{
+            html+='<h1> Census of the year '+year+'</h1>';
+        }
     html+='<div class="row"><div id="census-table" class="col">'
     html+="<table><tr><th>Surname</th><th>Housekeeper</th><th>Other half</th><th>Childs</th><th>Gold</th></tr>";
     list.forEach(element=>{
@@ -104,14 +158,14 @@ $('body').on('click', '#census, #begin',function(){
             if(index!=0){childString+=", ";}
 childString+=child.display("child");
         })}
-        html+="<tr><td>"+father.isNoble()+''+father.surname+"</td>";
+        html+="<tr><td>"+father.nobleParticle()+''+father.surname+"</td>";
         html+="<td>"+father.display()+"</td>";
         html+="<td>"+wife+"</td>";
         html+="<td>"+childString+"</td>";   
         html+="<td>"+element.gold+"</td></tr>";
     })
     html+="</table></div><div class='col' id='census-stats'>";
-    let mainSurnames=world.getMainFamilies(year);
+    let mainSurnames=world.getMainFamilies(year,town);
     mainSurnames=utils.getSortedKeys(mainSurnames);
     html+="<h3>Most used surnames</h3>"
     for( let i=0;i<10;i++){
@@ -160,9 +214,7 @@ function humanData(id){
  google.charts.setOnLoadCallback(utils.drawChart(data,"House"));
 }
     catch(error){
-        console.log('error a pu maison')
-        let logMessage= new LogMessage("error",error,[])
-        world.logsList.push(logMessage);
+        console.log(error)
     }
     
 }

@@ -3,9 +3,10 @@
 */
 let lastHumanId=10;
 let lastHouseId=10;
+let lastTownId=0;
+let world;
+let dc = new DataCenter();
 let utils= new Utils();
-let human = new Human();
-let world= new World();
 let frontBlock= new FrontBlock();
 
 $('#myLogs').html(frontBlock.homePanel());
@@ -13,11 +14,10 @@ google.charts.load('current', {'packages':['corechart']});
 
 
 function oneTurn(){
-    let timeLog=new LogMessage("time",utils.getDate(world.age)+". There is "+world.aliveHumanList.length+' humans.')
+    let timeLog=new LogMessage("time",utils.getDate(dc.age)+". There is "+dc.aliveHumanList.length+' humans.')
     $('#calendar').html(timeLog.message);
     $('#myLogs').append(timeLog);
-    world.logsList.push(timeLog);
-    world.aliveHumanList.forEach(element => {
+    dc.aliveHumanList.forEach(element => {
         element.getOlder();
         if(element.age==180){
             element.job=element.getJob();
@@ -27,28 +27,29 @@ function oneTurn(){
            element.wedding();
         }
         //death
-        if(element.deathProbability()<element.age &&(!element.avatar || element.age>620) ){
+        if(element.deathProbability()<element.age &&(!(element instanceof Avatar) || element.age>620) ){
         element.death();
         }
 
         //birth
         if(element.age>16*12 && element.age<50*12){
         let birth=element.birth(world);
-        if(birth){
-            world.logsList.push(birth.logBirth);
-            world.aliveHumanList.push(birth.newborn);
+        if(birth ){
+            dc.aliveHumanList.push(birth);
             }}
     
 });
-world.aliveHumanList=world.aliveHumanList.filter(function(ele){ return ele.age >= 0; });
-world.houseList=world.houseList.filter(function(ele){ return ele.gold >= 0; });
-world.age++;
-if(world.age%12==0){
+dc.aliveHumanList=dc.aliveHumanList.filter(function(ele){ return ele.age >= 0; });
+dc.houseList=dc.houseList.filter(function(ele){ return ele.gold >= 0; });
+dc.townList.forEach(town => {
+    if(town.king.age<0){town.king.succession(town);}
+});
+dc.age++;
+if(dc.age%12==0){
     world.payday();
-    if($('#curve_chart').css("display")=='block' && ($('#graph-max').val()<0 || $('#graph-max').val()*12>world.age)){
+    if($('#curve_chart').css("display")=='block' && ($('#graph-max').val()<0 || $('#graph-max').val()*12>dc.age)){
         style='census';
         if($('#champcache').html()=='champcache'){
-            console.log($('#champcache').attr('data-id'))
             humanData($('#champcache').attr('data-id'))
         }
         else{
@@ -58,16 +59,16 @@ if(world.age%12==0){
         }
     }
     //world.archive('human','house');
-    world.census.human.push(new Array());
-    world.census.house.push(new Array());
-    world.aliveHumanList.forEach(element => {
-        world.census.human[world.census.human.length-1].push(jQuery.extend({}, element));
+    dc.census.human.push(new Array());
+    dc.census.house.push(new Array());
+    dc.aliveHumanList.forEach(element => {
+        dc.census.human[dc.census.human.length-1].push(jQuery.extend({}, element));
     });
-    world.houseList.forEach(element => {
-        world.census.house[world.census.house.length-1].push(jQuery.extend({}, element));
+    dc.houseList.forEach(element => {
+        dc.census.house[dc.census.house.length-1].push(jQuery.extend({}, element));
     });
 }
- if(world.age<world.duration && world.frameDuration!="pause"){
+ if(dc.age<world.duration && world.frameDuration!="pause"){
  setTimeout(oneTurn,world.frameDuration);}
 
 }

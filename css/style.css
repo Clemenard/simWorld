@@ -15,4 +15,20 @@
 }
 table, th, td {
     border: 1px solid black;
-  }
+}
+#myLogs{
+min-height: 85vh;
+}
+footer{
+background-color: black;
+color: white;
+}
+a{
+    color: wheat;
+    text-decoration: none;
+}
+a:hover{
+    opacity: 0.8;
+    color: wheat;
+    text-decoration: none;
+}

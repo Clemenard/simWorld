@@ -1,52 +1,51 @@
 function World(duration=50,startPop=100,maxPop=10000,frameDuration=1000){
-    lastHumanId=10;
- lastHouseId=10;
     this.duration=(duration>1)?duration:50;
     this.startPop=(startPop>1)?startPop:100;
     this.maxPop=(maxPop>10)?maxPop:10000;
-    this.page=0;
     this.frameDuration=(frameDuration>5)?frameDuration:20;
-    this.aliveHumanList=new Array();
-    this.deadHumanList=new Array();
-    this.houseList=new Array();
-    this.logsList=new Array();
-    this.census={"human":new Array(),"house":new Array()};
-    this.age=0;
-    let avatar=new Avatar()
-        this.aliveHumanList.push(avatar);
-        this.houseList.push(new House(true,avatar));
-    for(let i=1;i<this.startPop;i++){
+    for(let i=0;i<this.startPop-1;i++){
         let human=new Human(true)
-        this.aliveHumanList.push(human);
-        this.houseList.push(new House(true,human));
+        dc.aliveHumanList.push(human);
     }
+    let avatar=new Avatar()
+    dc.aliveHumanList.push(avatar);
+    new House(true,avatar);
 }
 World.prototype.getHumanById= function(id,year=-1){
     if(year>-1){
-    let search=this.census.human[year].filter(function(ele){ return ele.id == id; })[0];
+    let search=dc.census.human[year].filter(function(ele){ return ele.id == id; })[0];
     if (search){return search;}}
-    let humanList=this.aliveHumanList.concat(this.deadHumanList);
+    let humanList=dc.aliveHumanList.concat(dc.deadHumanList);
     return humanList.filter(function(ele){ return ele.id == id; })[0];
+}
+World.prototype.getTownById= function(id){
+
+    let search=dc.townList.filter(function(ele){ return ele.id == id; })[0];
+    if (search){return search;}
+    return false;
+
 }
 
 World.prototype.getHousesBySurname= function(surname,year=-1){
     if(year>-1){
-    let search=this.census.house[year].filter(function(ele){ return ele.leader.surname == surname; });
+    let search=dc.census.house[year].filter(function(ele){ return ele.leader.surname == surname; });
     if (search){return search;}}
-    let humanList=this.aliveHumanList.concat(this.deadHumanList);
-    return this.houseList.filter(function(ele){ return ele.leader.surname == surname; });
+    return dc.houseList.filter(function(ele){ return ele.leader.surname == surname; });
 }
 
 World.prototype.getNobleHouse= function(option){
-    let nobles= search=this.houseList.filter(function(ele){ return ele.state == "noble"; });
+    let nobles= search=dc.houseList.filter(function(ele){ return ele.state == "noble"; });
     if(option=="random"){
         return nobles[utils.getRandomArbitrary(0,nobles.length-1)]}
-    return nobles
+        if(nobles.length>0){
+    return nobles}
+    return false;
 }
 
-World.prototype.getMainFamilies= function(year){
+World.prototype.getMainFamilies= function(year,town){
     let mainFamilies=new Array();
-    this.census.human[year].forEach(element => {
+    
+    dc.census.human[year].forEach(element => {
         if(!mainFamilies[element.surname]){mainFamilies[element.surname]=0;}
         mainFamilies[element.surname]++; 
     });
@@ -61,7 +60,7 @@ World.prototype.getDataGraph= function(graphs){
         case "Total Money":    data.push(header);break;
         case "Total population":        data.push(header.concat(['0-15 yo','15-30 yo','30-45 yo','45-60 yo','60+ yo']));break;
     }
-    this.census.human.forEach((element,i,childs)=>{
+    dc.census.human.forEach((element,i,childs)=>{
         let dataRow = [i];
 switch(graphs){
     case "Medium Age": 
@@ -71,7 +70,7 @@ switch(graphs){
             return (accumulator > currentValue.age ? accumulator : currentValue.age);},0)/12);
         break;
     case "Total Money": 
-        dataRow.push(world.census.house[i].reduce((accumulator, currentValue) => {
+        dataRow.push(dc.census.house[i].reduce((accumulator, currentValue) => {
             return (accumulator + currentValue.gold);},0));
         break;
     case "Total population":
@@ -94,11 +93,12 @@ World.prototype.getHouseGraph= function(human){
     let dataRow=new Array();
     let age=-1;
     let gold=0;
-world.census.human.forEach((ele,i,childs) =>{
+dc.census.human.forEach((ele,i,childs) =>{
     ele.forEach((e,j,childs) => {
      if( e.id==human){
         age=i;
-        gold=world.census.house[i].filter(function(house){ return (house.id == e.house ); })[0].gold;} 
+        gold=dc.census.house[i].filter(function(house){ return (house.id == e.house ); })[0].gold;
+    } 
           
     });
     if(age>=0 &&  typeof age=="number"){
@@ -111,17 +111,17 @@ return data;
 }
 
 World.prototype.payday= function(){
-    this.aliveHumanList.forEach((human,index,childs)=>{
+    dc.aliveHumanList.forEach((human,index,childs)=>{
         try{
         var house = human.getHouse();
-        
+        if(human.isKing()){house.gold+=24;}
         house.gold+=human.job.salary*12;}
         catch(error){
-            console.log("error")
+            console.log("payday : "+error)
         }
         
     });
-    this.houseList.forEach((house,index,childs)=>{
+    dc.houseList.forEach((house,index,childs)=>{
         house.payTax();   
     });
 return true;}

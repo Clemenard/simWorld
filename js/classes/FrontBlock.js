@@ -54,3 +54,15 @@ FrontBlock.prototype.graphPanel = function(min=0,max=100000,interface="census",c
     html+='<button '+hiddenStyle+' id="graph-change" class="ml-3">Update values</button>'
     html+='<div id="curve_chart" style="width: 900px; height: 500px"></div>'
     return html;}
+
+    FrontBlock.prototype.changelog = function(){
+        let html='<h1 class="mt-5">Changelog</h1>'
+        html+='<h2> 5 June : Towns introduced</h2>'
+        html+='<ul>'
+        html+='<li>- X towns are create. the founder become king</li>'
+        html+='<li>- town filter for logs & census</li>'
+        html+='<li>- social inequalities, the noble live longer and have better jobs</li>'
+        html+='<li>- kingship get inherited by the elder. if no child, genealogic search or the richest</li>'
+        html+='<li>- this changelog panel</li>'
+        html+='</ul>'
+        return html;}

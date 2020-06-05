@@ -5,19 +5,32 @@ function House(isGenerate=false,leader){
     if(isGenerate==true){
         this.gold= (leader.avatar)?utils.getRandomArbitrary(150,250):utils.getRandomArbitrary(20,250);
         leader.house=lastHouseId;
+        this.town=utils.getRandomArbitrary(0,dc.townsNumber);
+        if(!dc.getTown(this.town)){
+            let foundTown = new Town(leader);
+            new LogMessage("town",leader.display("safename")+" founded the town of "+foundTown.name+".",[leader.id],foundTown.id);
+            dc.townList.push(foundTown);
+            this.state="king";
+        }
     }
     else{
         this.gold=0;
 //the father give gold
-leader.house=this.newMember(leader)
 
         //the mother give gold
         let partner=world.getHumanById(leader.pairedWith);
+        let partnerIsKing=false
+        if(partner){
+            partnerIsKing=partner.isKing()
+        }
+
+        this.town=(leader.isKing())?leader.getHouse().town : (partnerIsKing)?partner.getHouse().town : utils.getRandomArbitrary(0,dc.townList.length-1);
+        leader.house=this.newMember(leader)
         if(partner){
             partner.house=this.newMember(partner)
         }
     }
-
+    dc.houseList.push(this);
     lastHouseId++;
 
 }
@@ -42,18 +55,16 @@ House.prototype.inheritance= function(){
     let relativeArray=new Array();
     childs.forEach((element,index,childs)=> {
       element.getHouse().gold+=share;
-      message+="["+element.sex+" id="+element.id+"]"+element.name+" "+element.surname+"[/id]";
+      message+=element.display('job');
       relativeArray.push(element.id);
 
       if(index<childs.length-1){message+=', '}
     });
     relativeArray.push(this.leader.id);
-    message+=' share an inheritance of '+this.gold+' gold from '+"["+this.leader.sex+" id="+this.leader.id+"]"+this.leader.name+" "+this.leader.surname+"[/id]"
-    let logMessage= new LogMessage("inheritance",message,relativeArray)
-    world.logsList.push(logMessage);}
+    message+=' share an inheritance of '+this.gold+' gold from '+this.leader.display('job')
+    new LogMessage("inheritance",message,relativeArray,this.town)}
     else{
-        let logMessage= new LogMessage("inheritance","["+this.leader.sex+" id="+this.leader.id+"]"+this.leader.name+" "+this.leader.surname+"[/id] dies without heritors.",[this.leader.id])
-        world.logsList.push(logMessage);
+        new LogMessage("inheritance",this.leader.display('job')+" dies without heritors.",[this.leader.id],this.town)
     }
     this.gold=-1;
     return true;
@@ -78,30 +89,28 @@ House.prototype.checkNobility= function(){
 if(this.gold>400 && this.state=="common"){
     this.gold-=100;
     this.state="noble";
-    let logMessage= new LogMessage("rank",this.leader.display("job")+" became a noble.",[this.leader.id])
-    world.logsList.push(logMessage);}
+    new LogMessage("rank",this.leader.display("job")+" became a noble.",[this.leader.id],this.town)}
 if(this.gold<200 && this.state=="noble"){
     this.state="common";
-    let logMessage= new LogMessage("rank",this.leader.display("job")+" became a commoner.",[this.leader.id])
-    world.logsList.push(logMessage);}
+    new LogMessage("rank",this.leader.display("job")+" became a commoner.",[this.leader.id],this.town)}
 return false;
 }
 House.prototype.robbing = function(){
     let robbed= world.getNobleHouse('random');
     try{
+    if(robbed){
     if(0.5>Math.random())
     {this.gold+=50;robbed.gold-=50;}
     else{
     let hanged=this.getHousemembers()[0];
+    if(hanged!=undefined){
     hanged.death();
-    let logMessage= new LogMessage("crime",hanged.display("job")+" get hanged for robbery.",[hanged.id]);
-    world.logsList.push(logMessage);}}
+    new LogMessage("crime",hanged.display("job")+" get hanged for robbery.",[hanged.id],this.town);}}}}
     catch(e){
-        console.log(e)
     }
 }
 
 House.prototype.getHousemembers = function(){
     let myself=this;
-    return world.aliveHumanList.filter(function(ele){ return ele.house == myself.id; })
+    return dc.aliveHumanList.filter(function(ele){ return ele.house == myself.id; })
 }

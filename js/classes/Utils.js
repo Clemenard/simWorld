@@ -67,8 +67,8 @@ return sortedKeys
         var dataView = google.visualization.arrayToDataTable(data);
         let xMax=$('#graph-max').val();
 let xMin=$('#graph-min').val();
-if(xMax<0 || xMax>world.age/12){xMax=Math.round(world.age/12);}
-if(xMin<0 || xMin>world.age/12){xMin=0;}
+if(xMax<0 || xMax>dc.age/12){xMax=Math.round(dc.age/12);}
+if(xMin<0 || xMin>dc.age/12){xMin=0;}
         var options = {
           title: title,
           curveType: 'function',

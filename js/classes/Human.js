@@ -1,41 +1,43 @@
 function Human(isGenerate=false,father,mother){
+    this.sex=(Math.random()>0.5)?"male":"female";
+    this.name=this.getNamed();
+    this.id=lastHumanId;
+
     if(isGenerate){
-        this.age=utils.getRandomArbitrary(240,human.AGE_MAX/2);
+        this.surname=this.getSurNamed();
+        this.age=utils.getRandomArbitrary(240,this.AGE_MAX/2);
+        this.avatar=false;
         this.father="anonymous";
         this.mother="anonymous";
-        this.job=this.getJob();
-        this.house=0;
-        this.avatar=false;
+        this.job=this.getJob(false);
     }
     else{
 this.age=0;
 if(father){
 this.father=father.id;
+this.surname=father.surname;
 this.house=father.house;
 this.mother=mother.id;
 this.job={name:"student",salary:0};
 this.avatar=(father.avatar||mother.avatar)?true:false;
 }
     }
-    this.sex=(Math.random()>0.5)?"male":"female";
-    this.name=this.getNamed();
-    this.surname=this.getSurNamed();
     this.pairedWith=-1;
     this.childs=0;
     this.pregnancyState=0;
-    this.id=lastHumanId;
     lastHumanId++;
 }
 Human.prototype.AGE_MAX = 1200;
 Human.prototype.getOlder = function(){
     this.age++;}
-Human.prototype.deathProbability= function(){   
-    return  Math.random()*(this.AGE_MAX*15-this.age*14)*12;
+Human.prototype.deathProbability= function(){
+    let socialFactor=(this.isNoble)?14:12
+    return  Math.random()*(this.AGE_MAX*15-this.age*14)*socialFactor;
 }
 Human.prototype.wedding= function(){
     try{
     var myself=this;
-    let partner=world.aliveHumanList.filter(function(ele){
+    let partner=dc.aliveHumanList.filter(function(ele){
         return (ele.sex!=myself.sex && ele.pairedWith==-1 && ele.age<600 && ele.age>180 && ele.id!=myself.id );
     });
     partner=partner[utils.getRandomArbitrary(0,partner.length-1)]
@@ -44,8 +46,7 @@ if(partner && utils.getRandomArbitrary(0,60)==1){
     partner.pairedWith=this.id;
     let husband= (this.sex=="male")?this:partner
     let wife=(this.sex=="male")?partner:this
-    
-    let wifeHouse=wife.getHouse()
+    let wifeHouse=wife.getHouse("wife")
     let bonusGold=0;
     if(wifeHouse && wifeHouse.isEmpty()){
         bonusGold+=wifeHouse.gold;
@@ -59,21 +60,18 @@ if(partner && utils.getRandomArbitrary(0,60)==1){
     let house=new House(false,husband);
     house.gold+=bonusGold;
     house.checkNobility();
-    world.houseList.push(house);
-    let logMessage= new LogMessage("wedding",husband.display("fullname")+" get married with "+wife.display()+". They begin with "+house.gold+" gold.",[husband.id,wife.id])
-    world.logsList.push(logMessage);
+    let checkTown=(dc.getTown(house.town)!=undefined)?dc.getTown(house.town).name:"unknown";
+    new LogMessage("wedding",husband.display("fullname")+" get married with "+wife.display()+". They begin with "+house.gold+" gold in the city of "+checkTown+".",[husband.id,wife.id],house.town)
     wife.surname=husband.surname;
     return  true;}
     return false;}
 catch(error){
-    let logMessage= new LogMessage("error",error,[])
-    world.logsList.push(logMessage);
+    console.log("wedding "+error)
 }
 }
 Human.prototype.death= function(){ 
     try{
-        let logWidow=false;
-        world.deadHumanList.push(this);
+        dc.deadHumanList.push(this);
         let house=this.getHouse(true)
         if(house && house.isEmpty()){
 house.inheritance();
@@ -81,38 +79,57 @@ house.inheritance();
         if(this.pairedWith>0){
         let partner= world.getHumanById(this.pairedWith);
         partner.pairedWith=-partner.pairedWith;
-        logWidow= new LogMessage("widow",partner.display("fullname")+", became a widow"+utils.genderMark(partner.sex,"er")+" at the age of "+partner.getAge()+".",[partner.id]);
-        world.logsList.push(logWidow);
+        new LogMessage("widow",partner.display("fullname")+", became a widow"+utils.genderMark(partner.sex,"er")+" at the age of "+partner.getAge()+".",[partner.id],partner.getHouse().town);
     }
-        let logDeath= new LogMessage("death",this.display("fullname")+", died at the age of "+this.getAge()+".",[this.id]);
-        if(world.page==this.id){$('#graph-max').val(Math.floor(world.age/12))}
-        world.logsList.push(logDeath);
+        new LogMessage("death",this.display("fullname")+", died at the age of "+this.getAge()+".",[this.id],this.getHouse().town);
+        if(world.page==this.id){$('#graph-max').val(Math.floor(dc.age/12))}
         this.age=-this.age;
         return true;
 }catch(error){
-        console.log(error)
+        console.log("death : "+error)
         return false;
     }
 }
 Human.prototype.birthProbability= function(){   
     
-    return  1*(Math.min(world.maxPop*0.2/world.aliveHumanList.length,20))/(Math.abs(this.age-this.AGE_MAX/2)+1+this.childs*300);
+    return  1*(Math.min(world.maxPop*0.2/dc.aliveHumanList.length,20))/(Math.abs(this.age-this.AGE_MAX/2)+1+this.childs*300);
 }
 Human.prototype.getNamed= function(){
-    let nameList=(this.sex=='male')?this.MALE_NAME_LIST:this.FEMALE_NAME_LIST
+    let nameList=(this.sex=='male')?dc.MALE_NAME_LIST:dc.FEMALE_NAME_LIST
     let index=Math.round(utils.getRandomArbitrary(0,nameList.length-1));
     return  nameList[index];
 }
-Human.prototype.getHouse= function(stat=false){
+
+Human.prototype.succession= function(town){
+    let successor=this.getChilds('alive')[0]
+    if(successor==undefined){successor=dc.richest(town).getHousemembers()[0];}
+        if(successor.getHouse().town!=town.id){
+        successor.getHouse().town=town.id;}
+        town.king=successor;
+    new LogMessage("town",successor.display("fullname")+" became king of "+town.name+".",[successor.id,this.id],town.id)
+    return true  
+}
+Human.prototype.getHouse= function(stat){
     let myself=this;
-    let house = world.houseList.filter(element => {return myself.house==element.id;})[0]
-    if(house){return house;}
-if(stat){return false}
-    throw new Error(world.age+" month : The house of "+this.id+" don't exist : "+this.house)
+    let house = dc.houseList.filter(element => {return myself.house==element.id;})[0]
+    if(house!=undefined){return house;}
+    else{
+    let house =new House(true,myself);
+        return house;}
 }
 Human.prototype.getSurNamed= function(){
-    let index=Math.round(utils.getRandomArbitrary(0,this.SURNAME_LIST.length-1));
-    return  this.SURNAME_LIST[index];
+    let index=Math.round(utils.getRandomArbitrary(0,dc.SURNAME_LIST.length-1));
+    return  dc.SURNAME_LIST[index];
+}
+Human.prototype.isKing = function(){
+    let myself=this
+ let town = dc.townList.filter(function(ele){
+     return (ele.king==myself);})
+
+    if(town && town.length>0){
+        return true;}
+
+    return false;
 }
 Human.prototype.birth= function(){
     if(this.birthProbability()>Math.random() && this.pairedWith>0 && this.pregnancyState==0) {
@@ -122,7 +139,7 @@ Human.prototype.birth= function(){
         this.pregnancyState++;   
     }
     else if(this.pregnancyState==9){
-        let partner= world.getHumanById(this.pairedWith);;
+        let partner= world.getHumanById(this.pairedWith);
         if(partner){
             let father=(this.sex=="male")? this : partner;
             let mother=(this.sex=="female")? this : partner;
@@ -131,25 +148,30 @@ Human.prototype.birth= function(){
             father.pregnancyState=0;
             mother.pregnancyState=0;
         let newborn= new Human(false,father,mother);
+        new LogMessage("birth",newborn.display("birth")+" is born from "+mother.display()+", and "+father.display()+".",[newborn.id,mother.id,father.id],father.getHouse().town)
         newborn.surname= father.surname;
-        let logMessage= new LogMessage("birth",newborn.display("birth")+" is born from "+mother.display()+", and "+father.display()+".",[newborn.id,mother.id,father.id])
-        return {"newborn":newborn,"logBirth":logMessage};}}
+        return newborn;}
+        else{
+            console.log('abortion'+this.pairedWith);
+            this.pregnancyState=0;
+    }
+    }
         return false;
     }
 
 Human.prototype.getChilds= function(state="none",year=-1){
     let myself=this;
     if(state=="alive"){
-        return world.aliveHumanList.filter(function(ele){ return (ele.father == myself.id || ele.mother == myself.id) ; });}
+        return dc.aliveHumanList.filter(function(ele){ return (ele.father == myself.id || ele.mother == myself.id) ; });}
         if(year>-1){
-            let search=world.census.human[year].filter(function(ele){ return (ele.father == myself.id || ele.mother == myself.id); });
+            let search=dc.census.human[year].filter(function(ele){ return (ele.father == myself.id || ele.mother == myself.id); });
     if (search){return search;}}
-    let humanList=world.aliveHumanList.concat(world.deadHumanList);
+    let humanList=dc.aliveHumanList.concat(dc.deadHumanList);
     return humanList.filter(function(ele){ return (ele.father == myself.id || ele.mother == myself.id) ; });
 }
 Human.prototype.getRelatedLogs= function(){
     let myself=this;
-    return world.logsList.filter(function(ele){
+    return dc.logsList.filter(function(ele){
         return ele.related.includes(myself.id);
 
      });
@@ -157,16 +179,18 @@ Human.prototype.getRelatedLogs= function(){
 Human.prototype.getAge= function(){
     return Math.floor(this.age/12);
 }
-Human.prototype.getJob= function(){
-    let job=this.JOB_LIST[utils.getRandomArbitrary(0,this.JOB_LIST.length-1)]
-    if(this.job){
-    let logMessage= new LogMessage("job",this.display('job')+" became a"+utils.aOrAn(job.name)+" "+job.name+', earning '+job.salary+' gold',[this.id])
-    world.logsList.push(logMessage);}
+Human.prototype.getJob= function(init=true){
+    let job=false
+    if(init){
+    job= (!this.isNoble())?this.JOB_LIST[utils.getRandomArbitrary(2,this.JOB_LIST.length-1)]:this.JOB_LIST[utils.getRandomArbitrary(0,this.JOB_LIST.length-2)];}
+    else{job=this.JOB_LIST[utils.getRandomArbitrary(0,this.JOB_LIST.length-1)];}
+    if(job){
+    new LogMessage("job",this.display('job')+" became a"+utils.aOrAn(job.name)+" "+job.name+', earning '+job.salary+' gold',[this.id],this.getHouse().town)}
     return job;
 }
 Human.prototype.logDay= function(type){
     let myself=this;
-    let log=world.logsList.filter(function(ele){ return ele.related[0]==myself.id && ele.type==type; })[0]
+    let log=dc.logsList.filter(function(ele){ return ele.related[0]==myself.id && ele.type==type; })[0]
     if (log){
     return Math.floor(log.age/12);}
     return '';
@@ -174,26 +198,31 @@ Human.prototype.logDay= function(type){
 
 Human.prototype.display= function(style="basic"){
     let html='';
+    if(this.isKing()){html+='&#128081;';}
     let setClasses=(this.avatar)?'avatar '+this.sex:' '+this.sex;
     switch(style){
         case "history":
-            html=utils.genderMark(this.sex,"name")+' ['+setClasses+' id='+this.id+']'+this.isNoble().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id], "+this.logDay('birth')+"-"+this.logDay('death')
+            html+=utils.genderMark(this.sex,"name")+' ['+setClasses+' id='+this.id+']'+this.nobleParticle().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id], "+this.logDay('birth')+"-"+this.logDay('death')
             break;
             case "birth":
-            html=' ['+setClasses+' id='+this.id+']'+this.isNoble().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id]"
+            html+=' ['+setClasses+' id='+this.id+']'+this.nobleParticle().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id]"
             break;
             case "child":
-            html="["+setClasses+" id="+this.id+"]"+this.name+"[/id], "+this.getAge()
+            html+="["+setClasses+" id="+this.id+"]"+this.name+"[/id], "+this.getAge()
             break;
             case "fullname":
-                html= "["+setClasses+" id="+this.id+"]"+this.isNoble().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id], "+this.getAge()+", "+this.job.name;
+                html+= "["+setClasses+" id="+this.id+"]"+this.nobleParticle().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id], "+this.getAge()+", "+this.job.name;
+            break;
+            case "safename":
+                html+= "["+setClasses+" id="+this.id+"]"+this.surname.toUpperCase()+" "+this.name+"[/id], "+this.getAge();
             break;
             case "job":
-            html='['+setClasses+' id='+this.id+']'+this.isNoble().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id] "
+            html+='['+setClasses+' id='+this.id+']'+this.nobleParticle().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id] "
             break;
         default: 
-        html= "["+setClasses+" id="+this.id+"]"+this.name+"[/id], "+this.getAge()+", "+this.job.name;
-            if(this.age<0){html= "["+setClasses+" id="+this.id+"]"+this.name+"[/id]";}
+        if(this.age<0){html+= "["+setClasses+" id="+this.id+"]"+this.name+"[/id]";}
+        else{
+        html+= "["+setClasses+" id="+this.id+"]"+this.name+"[/id], "+this.getAge()+", "+this.job.name;}
             break;}
             return html;
     }
@@ -207,220 +236,20 @@ if(ancestor){
 }
 else{return array;}
 }
-Human.prototype.isNoble= function(){try{
-    return particle= (this.getHouse().state=='noble')?"de ":''
+Human.prototype.isNoble= function(){
+    try{
+    return particle= (this.getHouse().state=='noble'|| this.getHouse().state=='king')?true:false
     }
     catch(error){
-        let logMessage= new LogMessage("error",error,[])
-        world.logsList.push(logMessage);
-        return '';
+        console.log(error)
+        return false;
     }}
 
+Human.prototype.nobleParticle= function(){
+    return particle= (this.isNoble())?"de ":'' } 
+
 Human.prototype.JOB_LIST = [
-    {name:"boss",salary:4},
+    {name:"bourgeois",salary:4},
     {name:"engineer",salary:3},
     {name:"technician",salary:2},
     {name:"proletarian",salary:1}]
-
-Human.prototype.SURNAME_LIST = ['Martin',
-'Bernard',
-'Thomas',
-'Petit',
-'Robert',
-'Richard',
-'Durand',
-'Dubois',
-'Moreau',
-'Laurent',
-'Simon',
-'Michel',
-'Lefebvre',
-'Leroy',
-'Roux',
-'David',
-'Bertrand',
-'Morel',
-'Fournier',
-'Girard',
-'Bonnet',
-'Dupont',
-'Lambert',
-'Fontaine',
-'Rousseau',
-'Vincent',
-'Muller',
-'Lefevre',
-'Faure',
-'Andre',
-'Mercier',
-'Blanc',
-'Guerin',
-'Boyer',
-'Garnier',
-'Chevalier',
-'Francois',
-'Legrand',
-'Gauthier',
-'Garcia',
-'Perrin',
-'Robin',
-'Clement',
-'Morin',
-'Nicolas',
-'Henry',
-'Roussel',
-'Mathieu',
-'Gautier',
-'Masson',
-'Marchand',
-'Duval',
-'Denis',
-'Dumont',
-'Marie',
-'Lemaire',
-'Noel',
-'Meyer',
-'Dufour',
-'Meunier',
-'Brun',
-'Blanchard',
-'Giraud',
-'Joly',
-'Riviere',
-'Lucas',
-'Brunet',
-'Gaillard',
-'Barbier',
-'Arnaud',
-'Martinez',
-'Gerard',
-'Roche',
-'Renard',
-'Schmitt',
-'Roy',
-'Leroux',
-'Colin',
-'Vidal',
-'Caron',
-'Picard',
-'Roger',
-'Fabre',
-'Aubert',
-'Lemoine',
-'Renaud',
-'Dumas',
-'Lacroix',
-'Olivier',
-'Philippe',
-'Bourgeois',
-'Pierre',
-'Benoit',
-'Rey',
-'Leclerc',
-'Payet',
-'Rolland',
-'Leclercq',
-'Guillaume',
-'Lecomte',
-'Lopez',
-'Jean',
-'Dupuy',
-'Guillot',
-'Hubert',
-'Berger',
-'Carpentier',
-'Sanchez',
-'Dupuis',
-'Moulin',
-'Louis',
-'Deschamps',
-'Huet',
-'Vasseur',
-'Perez',
-'Boucher',
-'Fleury',
-'Royer',
-'Klein',
-'Jacquet',
-'Adam',
-'Paris',
-'Poirier',
-'Marty',
-'Aubry',
-'Guyot',
-'Carre',
-'Charles',
-'Renault',
-'Charpentier',
-'Menard',
-'Maillard',
-'Baron',
-'Bertin',
-'Bailly',
-'Herve',
-'Schneider',
-'Fernandez',
-'Le Gall',
-'Collet',
-'Leger',
-'Bouvier',
-'Julien',
-'Prevost',
-'Millet',
-'Perrot',
-'Daniel',
-'Le Roux',
-'Cousin',
-'Germain',
-'Breton',
-'Besson',
-'Langlois',
-'Remy',
-'Le Goff',
-'Pelletier',
-'Leveque',
-'Perrier',
-'Leblanc',
-'Barre',
-'Lebrun',
-'Marchal',
-'Weber',
-'Mallet',
-'Hamon',
-'Boulanger',
-'Jacob',
-'Monnier',
-'Michaud',
-'Rodriguez',
-'Guichard',
-'Gillet',
-'Etienne',
-'Grondin',
-'Poulain',
-'Tessier',
-'Chevallier',
-'Collin',
-'Chauvin',
- 'Da Silva',
-'Bouchet',
-'Gay',
-'Lemaitre',
-'Benard',
-'Marechal',
-'Humbert',
-'Reynaud',
-'Antoine',
-'Hoarau',
-'Perret',
-'Barthelemy',
-'Cordier',
-'Pichon',
-'Lejeune',
-'Gilbert',
-'Lamy',
-'Delaunay',
-'Pasquier',
-'Carlier',
-'Laporte'];
-Human.prototype.FEMALE_NAME_LIST = ['Emma',    'Jade',    'Louise',    'Alice',    'Chloé',    'Lina',    'Léa',    'Rose',    'Anna',    'Mila',    'Inès',    'Ambre',    'Julia',    'Mia',    'Léna',    'Manon',    'Juliette',    'Lou',    'Camille',    'Zoé',    'Lola',    'Agathe',    'Jeanne',    'Lucie',    'Éva',    'Nina',    'Sarah',    'Romane',    'Inaya',    'Charlotte',    'Léonie',    'Romy',    'Adèle',    'Iris',    'Louna',    'Sofia',    'Margaux',    'Luna',    'Olivia',    'Clémence',    'Victoria',    'Léana',    'Clara',    'Éléna',    'Victoire',    'Aya',    'Margot',    'Nour',    'Giulia',    'Charlie',    'Capucine',    'Mya',    'Mathilde',    'Lana',    'Anaïs',    'Lilou',    'Alicia',    'Théa',    'Gabrielle',    'Lya',    'Yasmine',    'Maëlys',    'Assia',    'Apolline',    'Élise',    'Alix',    'Emy',    'Lise',    'Elsa',    'Lily',    'Lyana',    'Lisa',    'Noémie',    'Marie',    'Roxane',    'Lyna',    'Héloïse',    'Candice',    'Valentine',    'Zélie',    'Maya',    'Soline',    'Maria',    'Célia',    'Maëlle',    'Emmy',    'Éléna',    'Faustine',    'Salomé',    'Lila',    'Louane',    'Alya',    'Thaïs',    'Constance',    'Laura',    'Mélina',    'Livia',    'Amelia',    'Océane',    'Sara']
-Human.prototype.MALE_NAME_LIST = ['Gabriel',    'Raphaël',    'Léo',    'Louis',    'Lucas',    'Adam',    'Arthur',    'Jules',    'Hugo',    'Maël',    'Liam',    'Ethan',    'Paul',    'Nathan',    'Gabin',    'Sacha',    'Noah',    'Tom',    'Mohamed',    'Aaron',    'Théo',    'Noé',    'Victor',    'Martin',    'Mathis',    'Timéo',    'Nolan',    'Enzo',    'Éden',    'Axel',    'Antoine',    'Léon',    'Marius',    'Robin',    'Valentin',    'Clément',    'Baptiste',    'Tiago',    'Rayan',    'Samuel',    'Amir',    'Augustin',    'Naël',    'Maxime',    'Maxence',    'Gaspard',    'Eliott',    'Alexandre',    'Isaac',    'Mathéo',    'Yanis',    'Évan',    'Simon',    'Malo',    'Nino',    'Marceau',    'Kylian',    'Thomas',    'Ibrahim',    'Imran',    'Ayden',    'Lenny',    'Camille',    'Lyam',    'Kaïs',    'Oscar',    'Naïm',    'Sohan',    'Côme',    'Milo',    'Noa',    'Ilyes',    'Noam',    'Diego',    'Ismaël',    'Léandre',    'Soan',    'Mathys',    'Alexis',    'Lorenzo',    'Esteban',    'Owen',    'Youssef',    'Ilyan',    'William',    'Adrien',    'Ayoub',    'Jean',    'David',    'Ali',    'Adem',    'Wassim',    'Logan',    'Sandro',    'Pablo',    'Antonin',    'Joseph',    'Benjamin',    'Noham',    'Kenzo'];
