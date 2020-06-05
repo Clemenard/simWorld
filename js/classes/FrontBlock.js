@@ -57,7 +57,15 @@ FrontBlock.prototype.graphPanel = function(min=0,max=100000,interface="census",c
 
     FrontBlock.prototype.changelog = function(){
         let html='<h1 class="mt-5">Changelog</h1>'
-        html+='<h2> 5 June : Towns introduced</h2>'
+        html+='<h2 class="mt-3"> 6 June : Towns laws</h2>'
+        html+='<ul>'
+        html+='<li>- Bugfix : some houses weren\'t dissolved after death</li>'
+        html+='<li>- </li>'
+        html+='<li>- </li>'
+        html+='<li>- </li>'
+        html+='<li>- </li>'
+        html+='</ul>'
+        html+='<h2 class="mt-3"> 5 June : Towns introduced</h2>'
         html+='<ul>'
         html+='<li>- X towns are create. the founder become king</li>'
         html+='<li>- town filter for logs & census</li>'

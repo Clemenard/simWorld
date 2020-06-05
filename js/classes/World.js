@@ -28,7 +28,9 @@ World.prototype.getTownById= function(id){
 
 World.prototype.getHousesBySurname= function(surname,year=-1){
     if(year>-1){
-    let search=dc.census.house[year].filter(function(ele){ return ele.leader.surname == surname; });
+    let search=dc.census.house[year].filter(function(ele){ 
+        if(ele.gold!=100){
+        return ele.leader.surname == surname;} });
     if (search){return search;}}
     return dc.houseList.filter(function(ele){ return ele.leader.surname == surname; });
 }
@@ -44,7 +46,7 @@ World.prototype.getNobleHouse= function(option){
 
 World.prototype.getMainFamilies= function(year,town){
     let mainFamilies=new Array();
-    
+
     dc.census.human[year].forEach(element => {
         if(!mainFamilies[element.surname]){mainFamilies[element.surname]=0;}
         mainFamilies[element.surname]++; 
@@ -122,6 +124,7 @@ World.prototype.payday= function(){
         
     });
     dc.houseList.forEach((house,index,childs)=>{
+        if(!(house instanceof Orphanage))
         house.payTax();   
     });
 return true;}

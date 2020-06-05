@@ -47,8 +47,6 @@ $('body').on('click', '.timelapse',function(){
 //get logs for a kind of event
 $('body').on('change', '#chooseStat',function(){
     logs=($('#chooseStat').val()!="all")?$('#chooseStat').val():false;
-    console.log(logs)
-    console.log(town)
     world.page="logs"
     $('#myLogs').html('');
     dc.logsList.forEach(element => {let cTown=element.town==$('#chooseTown').val()
@@ -70,8 +68,6 @@ $('body').on('change', '#chooseStat',function(){
 //get town to display stats
 $('body').on('change', '#chooseTown',function(){
     town=($('#chooseTown').val()>=0)?$('#chooseTown').val():false;
-    console.log(logs)
-    console.log(town)
     if(world.page=="logs"){
     $('#myLogs').html('');
     dc.logsList.forEach(element => {
@@ -135,7 +131,23 @@ $('body').on('click', '#census',function(){
     list=list.sort(utils.compareValues('gold', 'desc'))
 
     if(town){
+        let city=dc.getTown(town)
         html+='<h1> Census of the year '+year+' in '+dc.TOWN_NAME_LIST[$('#chooseTown').val()]+'</h1>';
+        html+='This town is '+city.weather;
+        if(city.laws.orphanage){
+            let orphanage=city.getOrphanage();
+            if(orphanage!=undefined){
+            let orphans=orphanage.getHousemembers()
+            let orphanString=''
+            if(orphans){
+                orphans.forEach(child => {
+                    orphanString+=child.display('child')+'--';
+                });
+            html+=' and has an orphanage of '+orphans.length+' childs :'+orphanString;}}
+            else{
+                console.log("where is the orphanage?")
+            }
+        }
     }
         else{
             html+='<h1> Census of the year '+year+'</h1>';
@@ -143,6 +155,7 @@ $('body').on('click', '#census',function(){
     html+='<div class="row"><div id="census-table" class="col">'
     html+="<table><tr><th>Surname</th><th>Housekeeper</th><th>Other half</th><th>Childs</th><th>Gold</th></tr>";
     list.forEach(element=>{
+        if(!(element instanceof Orphanage)){
         let father=world.getHumanById(element.leader.id,year);
         let mother=world.getHumanById(element.leader.pairedWith,year);
         let wife=''
@@ -162,7 +175,7 @@ childString+=child.display("child");
         html+="<td>"+father.display()+"</td>";
         html+="<td>"+wife+"</td>";
         html+="<td>"+childString+"</td>";   
-        html+="<td>"+element.gold+"</td></tr>";
+        html+="<td>"+element.gold+"</td></tr>";}
     })
     html+="</table></div><div class='col' id='census-stats'>";
     let mainSurnames=world.getMainFamilies(year,town);

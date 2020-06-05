@@ -43,7 +43,7 @@ House.prototype.newMember= function(human){
 }
 House.prototype.isEmpty= function(){
     let housekeepers=this.getHousemembers()
-    if(housekeepers.length>1){
+    if(housekeepers.length>1 || this instanceof Orphanage){
         return false;}
     return true;
 }
@@ -66,7 +66,7 @@ House.prototype.inheritance= function(){
     else{
         new LogMessage("inheritance",this.leader.display('job')+" dies without heritors.",[this.leader.id],this.town)
     }
-    this.gold=-1;
+    this.gold=-10000;
     return true;
 }
 
@@ -78,7 +78,7 @@ House.prototype.payTax= function(town=''){
     //house taxes
     if(this.state=="noble"){this.gold-=36}
     else{this.gold-=24}
-    if(this.gold<0){
+    if(this.gold<0 ){
         this.gold=0;
     this.robbing();}
     //state change
@@ -110,7 +110,36 @@ House.prototype.robbing = function(){
     }
 }
 
-House.prototype.getHousemembers = function(){
+House.prototype.getHousemembers = function(year=-1){
     let myself=this;
+    if(year>-1){
+            let search=dc.census.human[year].filter(function(ele){ return ele.house == myself.id; })[0];
+            if (search){return search;}}
+    
     return dc.aliveHumanList.filter(function(ele){ return ele.house == myself.id; })
 }
+
+//CLASS
+function Orphanage(town){
+    this.leader={
+        id:1,
+        surname:"none",
+        getChilds:function(){return false;},
+        display:function(){return false;}
+
+    }
+    this.gold=100;
+    this.town=town;
+    this.id=lastHouseId;
+    
+    dc.houseList.push(this);
+    lastHouseId++;
+
+}
+Orphanage.prototype = Object.create(House.prototype);
+Orphanage.prototype.constructor = Orphanage;
+Object.defineProperty(this, "gold", {
+    get() {
+      return this.gold;
+    }
+  });

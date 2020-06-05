@@ -76,7 +76,11 @@ Human.prototype.death= function(){
         if(house && house.isEmpty()){
 house.inheritance();
         }
-        if(this.pairedWith>0){
+        let partner= world.getHumanById(this.pairedWith);
+        if(this.pairedWith<-2){
+            this.orphans();
+        }
+        else if(partner && this.pairedWith>0){
         let partner= world.getHumanById(this.pairedWith);
         partner.pairedWith=-partner.pairedWith;
         new LogMessage("widow",partner.display("fullname")+", became a widow"+utils.genderMark(partner.sex,"er")+" at the age of "+partner.getAge()+".",[partner.id],partner.getHouse().town);
@@ -94,6 +98,21 @@ Human.prototype.birthProbability= function(){
     
     return  1*(Math.min(world.maxPop*0.2/dc.aliveHumanList.length,20))/(Math.abs(this.age-this.AGE_MAX/2)+1+this.childs*300);
 }
+Human.prototype.orphans= function(){ 
+    let town= dc.getTown(this.getHouse().town) 
+    if(town.laws.orphanage){
+        let myself=this
+        let childs =myself.getChilds('alive')
+        childs.forEach(child => {
+        if(child.house==myself.house && child.age<180){
+            new LogMessage("orphan",child.display("fullname")+", is now in an orphanage.",[child.id],town.id);
+child.house=town.getOrphanage().id;
+        }    
+        });
+
+    }
+    return  1*(Math.min(world.maxPop*0.2/dc.aliveHumanList.length,20))/(Math.abs(this.age-this.AGE_MAX/2)+1+this.childs*300);
+}
 Human.prototype.getNamed= function(){
     let nameList=(this.sex=='male')?dc.MALE_NAME_LIST:dc.FEMALE_NAME_LIST
     let index=Math.round(utils.getRandomArbitrary(0,nameList.length-1));
@@ -103,11 +122,13 @@ Human.prototype.getNamed= function(){
 Human.prototype.succession= function(town){
     let successor=this.getChilds('alive')[0]
     if(successor==undefined){successor=dc.richest(town).getHousemembers()[0];}
+    if(successor!=undefined){
         if(successor.getHouse().town!=town.id){
         successor.getHouse().town=town.id;}
         town.king=successor;
     new LogMessage("town",successor.display("fullname")+" became king of "+town.name+".",[successor.id,this.id],town.id)
-    return true  
+    return true  }
+    return false;
 }
 Human.prototype.getHouse= function(stat){
     let myself=this;
@@ -253,3 +274,23 @@ Human.prototype.JOB_LIST = [
     {name:"engineer",salary:3},
     {name:"technician",salary:2},
     {name:"proletarian",salary:1}]
+
+    //CLASS
+    function Avatar(){
+        this.age=180;
+        this.avatar=true;
+            this.father="anonymous";
+            this.mother="anonymous";
+            this.house=0;
+            this.sex=$('#avatar-sex').val();
+        this.name=$('#avatar-name').val();
+        this.surname=$('#avatar-surname').val();
+        this.job=this.getJob();
+        this.pairedWith=-1;
+        this.childs=0;
+        this.pregnancyState=0;
+        this.id=lastHumanId;
+        lastHumanId++;
+    }
+    Avatar.prototype = Object.create(Human.prototype);
+    Avatar.prototype.constructor = Avatar;

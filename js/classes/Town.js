@@ -9,5 +9,15 @@ function Town(founder){
     this.id=lastTownId;
     $('#chooseTown').append('<option value="'+this.id+'">'+this.name+'</option>')
     lastTownId++;
+    if(this.laws.orphanage){
+        new Orphanage(this.id);
+    }
+}
+Town.prototype.getOrphanage= function(){
+    let myself=this;   
+    return dc.houseList.filter(function(ele){
+        return (ele.town!=myself.id && ele instanceof Orphanage );
+    })[0];
+   
 }
 
