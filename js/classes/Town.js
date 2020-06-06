@@ -15,7 +15,7 @@ function Town(founder){
 }
 Town.prototype.getOrphanage= function(){
     let myself=this;   
-    return dc.houseList.filter(function(ele){
+    return dc.alivehouseList.filter(function(ele){
         return (ele.town!=myself.id && ele instanceof Orphanage );
     })[0];
    

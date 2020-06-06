@@ -14,17 +14,16 @@ google.charts.load('current', {'packages':['corechart']});
 
 
 function oneTurn(){
-    console.log(dc.age%12)
     switch(dc.age%12){
         case 2 : $('body').toggleClass('winter spring' );break;
         case 5 : $('body').toggleClass('spring summer');break;
         case 8 : $('body').toggleClass('summer fall');break;
         case 11 : $('body').toggleClass('fall winter')
     }
-    let timeLog=new LogMessage("time",utils.getDate(dc.age)+". There is "+dc.aliveHumanList.length+' humans.')
+    let timeLog=new LogMessage("time",utils.getDate(dc.age)+". There is "+dc.alivehumanList.length+' humans.')
     $('#calendar').html(timeLog.message);
     $('#myLogs').append(timeLog);
-    dc.aliveHumanList.forEach(element => {
+    dc.alivehumanList.forEach(element => {
         element.getOlder();
         if(element.age==180){
             element.job=element.getJob();
@@ -42,15 +41,15 @@ function oneTurn(){
         if(element.age>16*12 && element.age<50*12){
         let birth=element.birth(world);
         if(birth ){
-            dc.aliveHumanList.push(birth);
+            dc.alivehumanList.push(birth);
             }}
     
 });
-dc.aliveHumanList=dc.aliveHumanList.filter(function(ele){ return ele.age >= 0; });
-dc.houseList=dc.houseList.filter(function(ele){ 
+dc.alivehumanList=dc.alivehumanList.filter(function(ele){ return ele.age >= 0; });
+dc.alivehouseList=dc.alivehouseList.filter(function(ele){ 
     if(ele instanceof Orphanage && ele.gold < 0){console.log("orphanage destroyed")}
     return ele.gold >= 0; });
-dc.townList.forEach(town => {
+dc.alivetownList.forEach(town => {
     if(town.king.age<0){town.king.succession(town);}
 });
 dc.age++;
@@ -70,10 +69,10 @@ if(dc.age%12==0){
     //world.archive('human','house');
     dc.census.human.push(new Array());
     dc.census.house.push(new Array());
-    dc.aliveHumanList.forEach(element => {
+    dc.alivehumanList.forEach(element => {
         dc.census.human[dc.census.human.length-1].push(jQuery.extend({}, element));
     });
-    dc.houseList.forEach(element => {
+    dc.alivehouseList.forEach(element => {
         dc.census.house[dc.census.house.length-1].push(jQuery.extend({}, element));
     });
 }

@@ -6,10 +6,10 @@ function House(isGenerate=false,leader){
         this.gold= (leader.avatar)?utils.getRandomArbitrary(150,250):utils.getRandomArbitrary(20,250);
         leader.house=lastHouseId;
         this.town=utils.getRandomArbitrary(0,dc.townsNumber);
-        if(!dc.getTown(this.town)){
+        if(!dc.getOneBy("town","id",this.town)){
             let foundTown = new Town(leader);
             new LogMessage("town",leader.display("safename")+" founded the town of "+foundTown.name+".",[leader.id],foundTown.id);
-            dc.townList.push(foundTown);
+            dc.alivetownList.push(foundTown);
             this.state="king";
         }
     }
@@ -18,19 +18,19 @@ function House(isGenerate=false,leader){
 //the father give gold
 
         //the mother give gold
-        let partner=world.getHumanById(leader.pairedWith);
+        let partner=dc.getOneBy('human','id',leader.pairedWith);
         let partnerIsKing=false
         if(partner){
             partnerIsKing=partner.isKing()
         }
 
-        this.town=(leader.isKing())?leader.getHouse().town : (partnerIsKing)?partner.getHouse().town : utils.getRandomArbitrary(0,dc.townList.length-1);
+        this.town=(leader.isKing())?leader.getHouse().town : (partnerIsKing)?partner.getHouse().town : utils.getRandomArbitrary(0,dc.alivetownList.length-1);
         leader.house=this.newMember(leader)
         if(partner){
             partner.house=this.newMember(partner)
         }
     }
-    dc.houseList.push(this);
+    dc.alivehouseList.push(this);
     lastHouseId++;
 
 }
@@ -48,7 +48,7 @@ House.prototype.isEmpty= function(){
     return true;
 }
 House.prototype.inheritance= function(){
-    let childs=this.leader.getChilds("alive");
+    let childs=dc.getBy("human","parents",this.leader.id);
     if(childs.length>0){
     let share=Math.round(this.gold/childs.length);
     let message=''
@@ -116,7 +116,7 @@ House.prototype.getHousemembers = function(year=-1){
             let search=dc.census.human[year].filter(function(ele){ return ele.house == myself.id; })[0];
             if (search){return search;}}
     
-    return dc.aliveHumanList.filter(function(ele){ return ele.house == myself.id; })
+    return dc.alivehumanList.filter(function(ele){ return ele.house == myself.id; })
 }
 
 //CLASS
@@ -132,7 +132,7 @@ function Orphanage(town){
     this.town=town;
     this.id=lastHouseId;
     
-    dc.houseList.push(this);
+    dc.alivehouseList.push(this);
     lastHouseId++;
 
 }

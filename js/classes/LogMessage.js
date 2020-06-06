@@ -4,9 +4,9 @@ function LogMessage(type="general",message="Nothing to say",related=new Array(),
     this.age=age;
     this.town=town;
     this.related=related;
-    dc.logsList.push(this);
+    dc.alivelogList.push(this);
 
 }
 LogMessage.prototype.display= function(){
     let display=utils.applyBBCode(this.message);
-    return "<strong>"+utils.getDate(this.age)+","+dc.getTown(this.town).name+"</strong> : "+display+"<br>";}
+    return "<strong>"+utils.getDate(this.age)+","+dc.getOneBy("town","id",this.town).name+"</strong> : "+display+"<br>";}

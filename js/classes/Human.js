@@ -37,7 +37,7 @@ Human.prototype.deathProbability= function(){
 Human.prototype.wedding= function(){
     try{
     var myself=this;
-    let partner=dc.aliveHumanList.filter(function(ele){
+    let partner=dc.alivehumanList.filter(function(ele){
         return (ele.sex!=myself.sex && ele.pairedWith==-1 && ele.age<600 && ele.age>180 && ele.id!=myself.id );
     });
     partner=partner[utils.getRandomArbitrary(0,partner.length-1)]
@@ -60,7 +60,7 @@ if(partner && utils.getRandomArbitrary(0,60)==1){
     let house=new House(false,husband);
     house.gold+=bonusGold;
     house.checkNobility();
-    let checkTown=(dc.getTown(house.town)!=undefined)?dc.getTown(house.town).name:"unknown";
+    let checkTown=(dc.getOneBy("town","id",house.town))?dc.getOneBy("town","id",house.town).name:"unknown";
     new LogMessage("wedding",husband.display("fullname")+" get married with "+wife.display()+". They begin with "+house.gold+" gold in the city of "+checkTown+".",[husband.id,wife.id],house.town)
     wife.surname=husband.surname;
     return  true;}
@@ -70,18 +70,17 @@ catch(error){
 }
 }
 Human.prototype.death= function(){ 
-    try{
-        dc.deadHumanList.push(this);
-        let house=this.getHouse(true)
+    
+        dc.deadhumanList.push(this);
+        let house=this.getHouse()
         if(house && house.isEmpty()){
 house.inheritance();
         }
-        let partner= world.getHumanById(this.pairedWith);
+        let partner= dc.getOneBy('human','id',this.pairedWith);
         if(this.pairedWith<-2){
             this.orphans();
         }
         else if(partner && this.pairedWith>0){
-        let partner= world.getHumanById(this.pairedWith);
         partner.pairedWith=-partner.pairedWith;
         new LogMessage("widow",partner.display("fullname")+", became a widow"+utils.genderMark(partner.sex,"er")+" at the age of "+partner.getAge()+".",[partner.id],partner.getHouse().town);
     }
@@ -89,29 +88,25 @@ house.inheritance();
         if(world.page==this.id){$('#graph-max').val(Math.floor(dc.age/12))}
         this.age=-this.age;
         return true;
-}catch(error){
-        console.log("death : "+error)
-        return false;
-    }
+
 }
 Human.prototype.birthProbability= function(){   
     
-    return  1*(Math.min(world.maxPop*0.2/dc.aliveHumanList.length,20))/(Math.abs(this.age-this.AGE_MAX/2)+1+this.childs*300);
+    return  1*(Math.min(world.maxPop*0.2/dc.alivehumanList.length,20))/(Math.abs(this.age-this.AGE_MAX/2)+1+this.childs*300);
 }
 Human.prototype.orphans= function(){ 
-    let town= dc.getTown(this.getHouse().town) 
+    let town= dc.getOneBy("town","id",this.getHouse().town) 
     if(town.laws.orphanage){
         let myself=this
-        let childs =myself.getChilds('alive')
+        let childs =dc.getBy("human","parents",this.id,year)
         childs.forEach(child => {
         if(child.house==myself.house && child.age<180){
             new LogMessage("orphan",child.display("fullname")+", is now in an orphanage.",[child.id],town.id);
 child.house=town.getOrphanage().id;
         }    
         });
-
     }
-    return  1*(Math.min(world.maxPop*0.2/dc.aliveHumanList.length,20))/(Math.abs(this.age-this.AGE_MAX/2)+1+this.childs*300);
+    return  1*(Math.min(world.maxPop*0.2/dc.alivehumanList.length,20))/(Math.abs(this.age-this.AGE_MAX/2)+1+this.childs*300);
 }
 Human.prototype.getNamed= function(){
     let nameList=(this.sex=='male')?dc.MALE_NAME_LIST:dc.FEMALE_NAME_LIST
@@ -120,7 +115,7 @@ Human.prototype.getNamed= function(){
 }
 
 Human.prototype.succession= function(town){
-    let successor=this.getChilds('alive')[0]
+    let successor=dc.getBy("human","parents",this.id)[0];
     if(successor==undefined){successor=dc.richest(town).getHousemembers()[0];}
     if(successor!=undefined){
         if(successor.getHouse().town!=town.id){
@@ -130,12 +125,11 @@ Human.prototype.succession= function(town){
     return true  }
     return false;
 }
-Human.prototype.getHouse= function(stat){
-    let myself=this;
-    let house = dc.houseList.filter(element => {return myself.house==element.id;})[0]
-    if(house!=undefined){return house;}
+Human.prototype.getHouse= function(){
+    let house = dc.getOneBy('house','id',this.house);
+    if(house){return house;}
     else{
-    let house =new House(true,myself);
+    let house =new House(true,this);
         return house;}
 }
 Human.prototype.getSurNamed= function(){
@@ -144,7 +138,7 @@ Human.prototype.getSurNamed= function(){
 }
 Human.prototype.isKing = function(){
     let myself=this
- let town = dc.townList.filter(function(ele){
+ let town = dc.alivetownList.filter(function(ele){
      return (ele.king==myself);})
 
     if(town && town.length>0){
@@ -160,7 +154,7 @@ Human.prototype.birth= function(){
         this.pregnancyState++;   
     }
     else if(this.pregnancyState==9){
-        let partner= world.getHumanById(this.pairedWith);
+        let partner= dc.getOneBy('human','id',this.pairedWith);
         if(partner){
             let father=(this.sex=="male")? this : partner;
             let mother=(this.sex=="female")? this : partner;
@@ -179,24 +173,6 @@ Human.prototype.birth= function(){
     }
         return false;
     }
-
-Human.prototype.getChilds= function(state="none",year=-1){
-    let myself=this;
-    if(state=="alive"){
-        return dc.aliveHumanList.filter(function(ele){ return (ele.father == myself.id || ele.mother == myself.id) ; });}
-        if(year>-1){
-            let search=dc.census.human[year].filter(function(ele){ return (ele.father == myself.id || ele.mother == myself.id); });
-    if (search){return search;}}
-    let humanList=dc.aliveHumanList.concat(dc.deadHumanList);
-    return humanList.filter(function(ele){ return (ele.father == myself.id || ele.mother == myself.id) ; });
-}
-Human.prototype.getRelatedLogs= function(){
-    let myself=this;
-    return dc.logsList.filter(function(ele){
-        return ele.related.includes(myself.id);
-
-     });
-}
 Human.prototype.getAge= function(){
     return Math.floor(this.age/12);
 }
@@ -211,7 +187,7 @@ Human.prototype.getJob= function(init=true){
 }
 Human.prototype.logDay= function(type){
     let myself=this;
-    let log=dc.logsList.filter(function(ele){ return ele.related[0]==myself.id && ele.type==type; })[0]
+    let log=dc.alivelogList.filter(function(ele){ return ele.related[0]==myself.id && ele.type==type; })[0]
     if (log){
     return Math.floor(log.age/12);}
     return '';
@@ -250,7 +226,7 @@ Human.prototype.display= function(style="basic"){
 
 Human.prototype.getAncestors= function(sex,array){
 let idAncestor =(sex=="male")?this.father:this.mother;
-let ancestor=world.getHumanById(idAncestor);
+let ancestor=dc.getOneBy('human','id',idAncestor);
 if(ancestor){
     array.push(ancestor);    
     return ancestor.getAncestors(sex,array)
