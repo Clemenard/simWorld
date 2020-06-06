@@ -1,0 +1,201 @@
+{
+    "layout": {
+        "admin": {
+            "site": "Website Management",
+            "produits": "Products Management",
+            "membres": "Members Management",
+            "commandes": "Orders  Management",
+            "promotions": "Pricecuts Management"
+        },
+        "modal": {
+            "connect": {
+                "1": "",
+                "2": "Log in",
+                "3": "or",
+                "4": "sign in",
+                "5": "to check out your cart."
+            }
+        },
+        "boutons": {
+            "valider": "Validate",
+            "annuler": "Cancel",
+            "supprimer": "Delete"
+        },
+        "boutique": "Shop",
+        "inscription": "Sign In",
+        "connexion": "Log In",
+        "deconnexion": "Log Out",
+        "panier": "Cart",
+        "commandes": "Orders",
+        "profil": "Profile",
+        "rechercher": "Search",
+        "footer": {
+            "1": " 2019 Bouquinthèque - Clément Menard - powered by FredoFramework",
+            "2": "This website is for pedagogical purpose only, you can't buy from it",
+            "quisommesnous": "About us"
+        }
+    },
+    "membre": {
+        "adminMembre": {
+            "pseudo": "Pseudo",
+            "identite": "Identity",
+            "nom": "Name",
+            "prenom": "Surname",
+            "adresse": "Adress",
+            "codePostal": "Postal Code",
+            "ville": "Town",
+            "role": {
+                "titre": "Job",
+                "0": "Member",
+                "1": "Admin"
+            }
+        },
+        "connexion": {
+            "motDePasse": "Password"
+        },
+        "inscription": {
+            "coordonnees": "Contact information",
+            "informations": "Login information"
+        },
+        "profil": {
+            "nouveauMdp": "New password"
+        }
+    },
+    "note": {
+        "notes": {
+            "avis": "Your opinion",
+            "titre": "Title",
+            "contenu": "Content",
+            "commenter": "Share your opinion",
+            "note": "Note",
+            "warning": "You need to log in before sharing your opinion"
+        }
+    },
+    "produit": {
+        "adminProduit": {
+            "id": "ID",
+            "titre": "Title",
+            "reference": "Ref.",
+            "description": "Desc.",
+            "auteur": "Author",
+            "dateParution": "Publication",
+            "traducteur": "Traductor",
+            "dateTraduction": "Date t.",
+            "editeur": "Publisher",
+            "collection": "Collection",
+            "prix": "Cost",
+            "stock": "Stock",
+            "photo": "Picture"
+        },
+        "ajoutProduit": {
+            "page": "Add a product",
+            "add": "Add this product"
+        },
+        "boutique": {
+            "categories": {
+                "toutes": "All",
+                "BandeDessinée": "Comic books",
+                "Cuisine": "Cooking",
+                "Roman": "Novels",
+                "Theatre": "Theatre"
+            },
+            "titre": "Welcome in knowledge's sanctuary",
+            "soustitre": "Best prices in the world!",
+            "meilleursventes": "Our best sales",
+            "details": "See the details"
+        },
+        "ficheProduit": {
+            "associes1": "Theses books from the category",
+            "associes2": "could please you.",
+            "ajout": "Add to the cart",
+            "rupture": "This product is currently sold out.",
+            "erreur1": "This product has no review",
+            "erreur2": "To give your opinion you need to be connected",
+            "formAvis": "Give a review",
+            "link": "See all reviews"
+        },
+        "panier": {
+            "vide": "Your cart is empty :-(",
+            "quantite": "Quantity",
+            "prixUnite": "Price for one",
+            "prixTotal": "Price for all",
+            "valider": "Make your purchase",
+            "vider": "Empty the cart",
+            "mentionPrix": {
+                "1": "Total price for",
+                "2": "articles."
+            },
+            "montantTVA": "Taxes",
+            "avecTVA": "Price with taxes include",
+            "codePromo": "Input your coupon code"
+        },
+        "recherche": {}
+    },
+    "commande": {
+        "adminCommande": {
+            "titre": "Dashboard for orders",
+            "soustitre": {
+                "1": "Order",
+                "2": "from",
+                "3": "Dated from",
+                "4": "at"
+            },
+            "civilite": {
+                "m": "Mr",
+                "mme": "Ms"
+            },
+            "reference": "Ref",
+            "coutUnite": "€/piece",
+            "adresse": "Adress",
+            "statut": {
+                "1": "Preparing the order",
+                "2": "Shipping",
+                "3": "Delivered",
+                "titre": "Actual state",
+                "bouton1": "State 'Send'",
+                "bouton2": "State 'Shipped'"
+            },
+            "erreur": "There is no order to manage"
+        },
+        "commande": {
+            "titre": "My orders",
+            "erreur": "You don't have any orders",
+            "numCommande": "Order ID",
+            "dateCommande": "Order date",
+            "montant": "Price",
+            "etat": "State",
+            "promotion": "Promotion"
+        },
+        "detailscommande": {
+            "titre": "Order's description",
+            "alert": {
+                "1": "Order send the",
+                "2": "For a total cost of",
+                "3": "State"
+            },
+            "coupon": "Promotion ticket",
+            "retour": "Get back to order's history"
+        },
+        "meilleursventes": {
+            "titre": "Best sales",
+            "rang": "Rank",
+            "nbVentes": "Number of sales"
+        }
+    },
+    "divers": {
+        "quisommesnous": {
+            "h1": "A wide knowledge",
+            "h2": "Teams of booksellers at your service",
+            "h3a": "Booksellers advices",
+            "h3b": "Customers service comes first",
+            "h4a": "Customers service",
+            "h4b": "An efficient logistic team",
+            "p1a": "Since 1927, Bouquinthèque has developped a web of 11 bookshops in Yvelines, and recently in the Oise. His bookshoppers are acknowledged for their passion and knowledge, in science as in leisury.When launching bouquinthèque.fr in 2077, Bouquinthèque has acquired a firm knowledge of e-shopping.",
+            "p1b": "Allowing each reader to find his book and each book to find his reader is the day-by-day goal of our 2-members team.",
+            "p2": "In our Yvelines's bookshops, more than 18 bookshoppers give advices and share theirs likings",
+            "p3": "Ours commercial helpers and data entry clerks give you total satisfaction and do their best to help you to solve the problems you can encounter(orders following, shipping delays). We offer to our customers the possibility to receive advices from ours bookshoppers, corresponding to theirs needs by the help of the newsletter.",
+            "p4a": "First and last link in the chain, our logistical teams are in the midst of the customer's satisfaction.",
+            "p4b": "The love of teamworking link our coworkers, comming from a wide broad of cursus. Each day, our logistical team give proofs of rigour and organisation to allow the best service to be given by optimizing the stocks and the shippings, for professionals and individuals"
+        }
+    }
+}

@@ -1,0 +1,130 @@
+body{
+  margin-top:80px;
+}
+.main-container{
+  min-height:calc(100vh - 136px);
+}
+.bg-dark{
+  color : lightgrey;
+}
+.active, .btn-success, .btn-success a, .dropdown-menu {
+background-color:rgb(101,64,46)!important;
+color:white;
+}
+.btn-success{
+border : rgb(101,64,46);}
+a{
+color:rgb(101,64,46);
+}
+a .active{
+color:white;
+}
+.promotions{
+  text-align: center;
+  color: rgb(101,64,46);
+  text-shadow: gold 0.2em 0.2em 0.4em;
+}
+.brown{
+  background-color:rgb(101,64,46);
+  color:white;
+}
+a:hover, .btn-success:hover, a .active:hover, .dropdown-item a:hover{
+  color:rgb(51,148,65);
+  }
+
+  h1,h2,h3,h4{
+    color:rgb(101,64,46);  
+  }
+  .flamme h1,.flamme h2,.flamme h3,.flamme h4{
+    color:white;  
+  }
+
+.flamme,#meilleursventes  {
+  font-weight: bold;
+  color:white!important;
+  text-shadow: rgb(101,64,46) 0.2em 0.2em 0.4em;
+  width: 100%;
+}
+.jumbotron{
+  background-image: url('../photo/banniere.jpg')!important;
+}
+
+.card-img{
+max-height:250px;
+}
+.dropdown-item{
+  border-bottom:rgb(51,148,65) solid 1px;
+}
+.thumbnail{
+  max-height:68px;
+}
+.table-striped tbody tr:nth-of-type(odd){
+  background-color:rgba(101,64,46,0.5);
+}
+
+.navbar-flag {
+  width: 40px;
+  margin-right:5px;
+  cursor: pointer;
+}
+ @media screen and (max-width: 640px) {
+  h2,h3{
+  font-size:1.2em;
+  }
+  .card{
+    width:100%;
+  }
+  } 
+
+.male{
+    color:blue;
+}
+.female{
+    color:pink;
+}
+.avatar{
+    background-color:goldenrod;
+}
+.nav-link,#homepage, .link{
+    cursor: pointer;
+}
+#timelapse{
+    height:100px;
+}
+table, th, td {
+    border: 1px solid black;
+}
+#myLogs{
+min-height: 85vh;
+}
+footer{
+background-color: black;
+color: white;
+}
+a{
+    color: wheat;
+    text-decoration: none;
+}
+a:hover{
+    opacity: 0.8;
+    color: wheat;
+    text-decoration: none;
+}
+body{
+    transition: background-color 3s ease;
+}
+.container{
+background-color: rgba(245, 245, 245);
+}
+.winter{
+    background-color: rgba(245, 245, 245,0.5);
+}
+.fall{
+    background-color: rgba(222,184,135,0.5);
+}
+.spring{
+    background-color: rgba(173,255,47,0.5);
+}
+.summer{
+    background-color: rgba(165,42,42,0.5);
+}

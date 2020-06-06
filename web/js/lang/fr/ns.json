@@ -1,0 +1,200 @@
+{
+    "layout": {
+        "admin": {
+            "site": "Gestion du site",
+            "produits": "Gestion des produits",
+            "membres": "Gestion des membres",
+            "commandes": "Gestion des commandes",
+            "promotions": "Gestion des promotions"
+        },
+        "modal": {
+            "connect": {
+                "1": "Veuillez vous",
+                "2": "connecter",
+                "3": "ou vous",
+                "4": "inscrire",
+                "5": "pour valider votre panier."
+            }
+        },
+        "boutons": {
+            "valider": "Valider",
+            "annuler": "Annuler",
+            "supprimer": "Supprimer"
+        },
+        "boutique": "Boutique",
+        "inscription": "Inscription",
+        "connexion": "Connexion",
+        "deconnexion": "Déconnexion",
+        "panier": "Panier",
+        "commandes": "Commandes",
+        "profil": "Profil",
+        "rechercher": "Rechercher",
+        "footer": {
+            "1": "2019 Bouquinthèque - Clément Menard - basé sur le FredoFramework",
+            "2": "Ce site est une maquette, il ne permet nullement d'opérer des transactions",
+            "quisommesnous": "About us"
+        }
+    },
+    "membre": {
+        "adminMembre": {
+            "pseudo": "Pseudo",
+            "identite": "Identité",
+            "nom": "Nom",
+            "prenom": "Prénom",
+            "adresse": "Adresse",
+            "codePostal": "Code Postal",
+            "ville": "Ville",
+            "role": {
+                "titre": "Rôle",
+                "0": "Membre",
+                "1": "Admin"
+            }
+        },
+        "connexion": {
+            "motDePasse": "Mot de passe"
+        },
+        "inscription": {
+            "coordonnees": "Coordonnées",
+            "informations": "Informations"
+        },
+        "profil": {
+            "nouveauMdp": "Nouveau mot de passe"
+        }
+    },
+    "note": {
+        "notes": {
+            "avis": "Votre avis",
+            "titre": "Titre",
+            "contenu": "Contenu",
+            "commenter": "Donnez votre avis",
+            "note": "Note",
+            "warning": "Vous devez vous connecter pour laisser un avis"
+        }
+    },
+    "produit": {
+        "adminProduit": {
+            "id": "ID",
+            "titre": "Titre",
+            "reference": "Ref.",
+            "description": "Desc.",
+            "auteur": "Auteur",
+            "dateParution": "Parution",
+            "traducteur": "Traducteur",
+            "dateTraduction": "Date t.",
+            "editeur": "Editeur",
+            "collection": "Collection",
+            "prix": "Prix",
+            "stock": "Stock",
+            "photo": "Photo"
+        },
+        "ajoutProduit": {
+            "page": "Ajouter un produit",
+            "add": "Ajouter ce produit"
+        },
+        "boutique": {
+            "categories": {
+                "toutes": "Toutes",
+                "BandeDessinée": "Bande Dessinée",
+                "Cuisine": "Cuisine",
+                "Roman": "Romans",
+                "Theatre": "Theatre"
+            },
+            "titre": "Bienvenue dans le temple du savoir",
+            "soustitre": "Des prix défiant toute concurrence!",
+            "meilleursventes": "Nos meilleures ventes",
+            "details": "Voir les détails"
+        },
+        "ficheProduit": {
+            "associes1": "Ces articles de la catégorie",
+            "associes2": "pourraient vous plaire.",
+            "ajout": "Ajout au panier",
+            "rupture": "Produit victime de son succès (indisponible)",
+            "erreur1": "Ce produit n'a pas d'avis",
+            "erreur2": "Vous devez être connecté pour donner vore avis",
+            "formAvis": "Donnez votre avis",
+            "link": "Voir tous les avis"
+        },
+        "panier": {
+            "vide": "Votre panier est vide :-(",
+            "quantite": "Quantité",
+            "prixUnite": "Prix unitaire",
+            "prixTotal": "Prix total",
+            "valider": "Validez votre panier",
+            "vider": "Videz votre panier",
+            "mentionPrix": {
+                "1": "Prix total pour",
+                "2": "articles."
+            },
+            "montantTVA": "Montant de la TVA",
+            "avecTVA": "Prix TVA incluse",
+            "codePromo": "Validez votre code promotionel"
+        }
+    },
+    "commande": {
+        "adminCommande": {
+            "titre": "Administration des commandes",
+            "soustitre": {
+                "1": "Commande",
+                "2": "de",
+                "3": "En date du",
+                "4": "à"
+            },
+            "civilite": {
+                "m": "M",
+                "mme": "Mme"
+            },
+            "reference": "Ref",
+            "coutUnite": "€/pièce",
+            "adresse": "Adresse",
+            "statut": {
+                "1": "En cours de traitement",
+                "2": "En cours de livraison",
+                "3": "Livré",
+                "titre": "Statut actuel",
+                "bouton1": "Statut 'Envoyé'",
+                "bouton2": "Statut 'Livré'"
+            },
+            "erreur": "Il n'y a pas encore de commandes à traiter"
+        },
+        "commande": {
+            "titre": "Mes commandes",
+            "erreur": "Vous n'avez pas encore de commandes",
+            "numCommande": "N° Commande",
+            "dateCommande": "Date de commande",
+            "montant": "Montant",
+            "etat": "Etat",
+            "promotion": "Promotion"
+        },
+        "detailscommande": {
+            "titre": "Détails de la commande",
+            "alert": {
+                "1": "Commande passée le",
+                "2": "Pour un montant total de",
+                "3": "Etat"
+            },
+            "coupon": "Coupon promotion",
+            "retour": "Revenir à l'historique des commandes"
+        },
+        "meilleursventes": {
+            "titre": "Meilleures ventes",
+            "rang": "Rang",
+            "nbVentes": "Nombre de ventes"
+        }
+    },
+    "divers": {
+        "quisommesnous": {
+            "h1": "Une solide expérience",
+            "h2": "Des équipes de libraires pour vous conseiller",
+            "h3a": "Conseils libraires",
+            "h3b": "Un service client de qualité",
+            "h4a": "Service clients",
+            "h4b": "Une équipe logistique performante",
+            "p1a": "Depuis 1927, Bouquinthèque a développé un réseau de 11 librairies en Yvelines et récemment dans le bassin de l'Oise.Ses libraires sont reconnues pour leur expertise et leur passion des livres, dans les domaines de la connaissance comme du loisir.En lançant Bouquinthèque.fr en 2077, Bouquinthèque a acquis une solide expérience du e-commerce.",
+            "p1b": "Permettre à chaque lecteur de trouver ses livres et à chaque livre de trouver ses lecteurs est l'objectif quotidien de chacun de ses 2 collaborateur.",
+            "p2": "Dans nos librairies situées en Yvelines, ce sont plus de 18 libraires et papetiers qui vous conseillent et partagent au quotidien leurs coups de coeur.",
+            "p3": "Nos assistants commerciaux et opérateurs de saisie s’assurent de la satisfaction client et apportent des réponses et des solutions concrètes aux problèmes rencontrés(suivi des commandes, délai de livraison). Nous offrons la possibilité à nos clients de recevoir en ligne nos conseils de libraires, adaptés à leurs besoins et àleurs envies notamment grâce à l’envoi de nos newletters.",
+            "p4a": "Premier et dernier maillon de la chaîne, nos équipes logistiques sont au cœur de la satisfaction de nos clients.",
+            "p4b": "L’envie de travailler en équipe unit ses collaborateurs aux parcours et formations de tout horizon. Chaque jour, nos équipes logistiques font preuve de rigueur et d’organisation pour garantir le meilleur traitement possible des flux de produits livres ainsi que l’optimisation du stockage, du transport et de la distribution aux clients magasin et professionnels."
+        }
+    }
+}
