@@ -32,3 +32,21 @@ a:hover{
     color: wheat;
     text-decoration: none;
 }
+body{
+    transition: background-color 3s ease;
+}
+.container{
+background-color: rgba(245, 245, 245);
+}
+.winter{
+    background-color: rgba(245, 245, 245,0.5);
+}
+.fall{
+    background-color: rgba(222,184,135,0.5);
+}
+.spring{
+    background-color: rgba(173,255,47,0.5);
+}
+.summer{
+    background-color: rgba(165,42,42,0.5);
+}

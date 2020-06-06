@@ -14,6 +14,13 @@ google.charts.load('current', {'packages':['corechart']});
 
 
 function oneTurn(){
+    console.log(dc.age%12)
+    switch(dc.age%12){
+        case 2 : $('body').toggleClass('winter spring' );break;
+        case 5 : $('body').toggleClass('spring summer');break;
+        case 8 : $('body').toggleClass('summer fall');break;
+        case 11 : $('body').toggleClass('fall winter')
+    }
     let timeLog=new LogMessage("time",utils.getDate(dc.age)+". There is "+dc.aliveHumanList.length+' humans.')
     $('#calendar').html(timeLog.message);
     $('#myLogs').append(timeLog);

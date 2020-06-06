@@ -33,10 +33,10 @@ $('body').on('click', '.timelapse',function(){
             $('.timelapse').prop('disabled', false);
             $(this).prop('disabled', true);
             switch($(this).attr('id')){
-                case 'timelapse-play':  world.frameDuration=1000;break;
-                case 'timelapse-play2':  world.frameDuration=500;break;
-                case 'timelapse-play10':  world.frameDuration=100;break;
-                case 'timelapse-play50':  world.frameDuration=20;break;
+                case 'timelapse-play':  world.frameDuration=1000;$('#myLogs').css('transition','background-color 3s ease');break;
+                case 'timelapse-play2':  world.frameDuration=500;$('#myLogs').css('transition','background-color 1.5s ease');break;
+                case 'timelapse-play10':  world.frameDuration=100;$('#myLogs').css('transition','background-color 0.3s ease');break;
+                case 'timelapse-play50':  world.frameDuration=20;$('#myLogs').css('transition','background-color 30s ease');break;
                 case 'timelapse-pause':  world.frameDuration="pause";
     }
     if($(this).attr('id')!="timelapse-pause" && formerDuration=="pause"){

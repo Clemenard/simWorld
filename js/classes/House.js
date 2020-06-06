@@ -78,7 +78,7 @@ House.prototype.payTax= function(town=''){
     //house taxes
     if(this.state=="noble"){this.gold-=36}
     else{this.gold-=24}
-    if(this.gold<0 ){
+    if(this.gold<0 && this.gold>-1000 ){
         this.gold=0;
     this.robbing();}
     //state change
@@ -103,7 +103,7 @@ House.prototype.robbing = function(){
     {this.gold+=50;robbed.gold-=50;}
     else{
     let hanged=this.getHousemembers()[0];
-    if(hanged!=undefined){
+    if(hanged!=undefined && !(hanged.getHouse() instanceof Orphanage)){
     hanged.death();
     new LogMessage("crime",hanged.display("job")+" get hanged for robbery.",[hanged.id],this.town);}}}}
     catch(e){
