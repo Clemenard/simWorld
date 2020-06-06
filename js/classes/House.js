@@ -67,6 +67,7 @@ House.prototype.inheritance= function(){
         new LogMessage("inheritance",this.leader.display('job')+" dies without heritors.",[this.leader.id],this.town)
     }
     this.gold=-10000;
+    dc.deadhouseList.push(this);
     return true;
 }
 

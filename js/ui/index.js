@@ -61,9 +61,7 @@ if(dc.age%12==0){
             humanData($('#champcache').attr('data-id'))
         }
         else{
-            let data=world.getDataGraph($('#chooseGraph').val());
-            let title=$('#chooseGraph').val()
-             google.charts.setOnLoadCallback(utils.drawChart(data,title));
+            world.getDataGraph($('#chooseGraph').val());
         }
     }
     //world.archive('human','house');

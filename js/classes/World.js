@@ -41,13 +41,14 @@ World.prototype.getMainFamilies= function(year,town){
     let mainFamilies=new Array();
 
     dc.census.human[year].forEach(element => {
+        if(!town || dc.getOneBy("town",'id',dc.getOneBy("house",'id',element.house).town).id ==town){
         if(!mainFamilies[element.surname]){mainFamilies[element.surname]=0;}
-        mainFamilies[element.surname]++; 
+        mainFamilies[element.surname]++; }
     });
     return mainFamilies;
 } 
  
-World.prototype.getDataGraph= function(graphs,town){
+World.prototype.getDataGraph= function(graphs){
     let data= new Array();
     let header=['Year'].concat(graphs)
     switch(graphs){
@@ -56,7 +57,6 @@ World.prototype.getDataGraph= function(graphs,town){
         case "Total population":        data.push(header.concat(['0-15 yo','15-30 yo','30-45 yo','45-60 yo','60+ yo']));break;
     }   
     dc.census.human.forEach((element,i,childs)=>{
-        if(town){element=element.filter(function(ele){ return ele.getHouse().town == town; })}
         let dataRow = [i];
 switch(graphs){
     case "Medium Age": 
@@ -81,7 +81,8 @@ switch(graphs){
         data.push(dataRow)
     
 });
-return data;
+google.charts.setOnLoadCallback(utils.drawChart(data,graph));
+return true;
 }
 
 World.prototype.getHouseGraph= function(human){

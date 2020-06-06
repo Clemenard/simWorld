@@ -51,11 +51,13 @@ if(partner && utils.getRandomArbitrary(0,60)==1){
     if(wifeHouse && wifeHouse.isEmpty()){
         bonusGold+=wifeHouse.gold;
         wifeHouse.gold=-1;
+        dc.deadhouseList.push(wifeHouse);
                 }
                 let husbandHouse=husband.getHouse()
     if(husbandHouse && husbandHouse.isEmpty()){
         bonusGold+=husbandHouse.gold;
         husbandHouse.gold=-1;
+        dc.deadhouseList.push(husbandHouse);
                 }
     let house=new House(false,husband);
     house.gold+=bonusGold;

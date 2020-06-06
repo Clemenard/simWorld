@@ -86,8 +86,8 @@ $('body').on('click', '#graph, #graph-change',function(){
 })
 $('body').on('change', '#chooseGraph',function(){
     graph=$('#chooseGraph').val();
-    let data=world.getDataGraph(graph,town);
-    google.charts.setOnLoadCallback(utils.drawChart(data,$('#chooseGraph').val()));
+    world.getDataGraph(graph);
+
     })
 
 //get a table of all humans
@@ -98,6 +98,7 @@ $('body').on('click', '#census',function(){
 
 function humanData(id){
     try{
+        id=Number(id)
     let search=dc.getOneBy('human','id',id);
     let maleAncestors=search.getAncestors("male",new Array());
     let femaleAncestors=search.getAncestors("female",new Array());
@@ -154,8 +155,7 @@ function getGraphs(){
     let max=$('#graph-max').val();
     if(!max){max=100000;}
     $('#myLogs').html(frontBlock.graphPanel(min,max,"census",graph))
- data=world.getDataGraph(graph,town);
- google.charts.setOnLoadCallback(utils.drawChart(data,graph));
+ world.getDataGraph(graph);
 
 }
 function getCensus(){
@@ -194,7 +194,7 @@ function getCensus(){
         if(!(element instanceof Orphanage)){
         let father=dc.getOneBy('human','id',element.leader.id,year);
         let mother=dc.getOneBy('human','id',element.leader.pairedWith,year);
-        let wife,husband;
+        let wife='',husband='';
         if(mother){wife=mother.display()}
         if(father){husband=father.display()}
         let childs=dc.getBy("human","parents",element.leader.id,year)

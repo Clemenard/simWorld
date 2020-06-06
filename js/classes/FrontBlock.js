@@ -43,9 +43,6 @@ FrontBlock.prototype.graphPanel = function(min=0,max=100000,interface="census",c
     let hiddenStyle="";
     if(interface=="house"){hiddenStyle=' style="display:none;" '}
     let html='';
-    if(town){
-        html+='<h2 class="mt-3">City of '+dc.getOneBy('town','id',town).name+'</h2>'
-    }
     html+='<select class="mt-3"'+hiddenStyle+' id=chooseGraph>'
     dc.GRAPH_CAT.forEach(cat => {
         html+='<option value="'+cat+'" ';
@@ -69,7 +66,7 @@ FrontBlock.prototype.graphPanel = function(min=0,max=100000,interface="census",c
         html+='<li>- Bugfix : some houses weren\'t dissolved after death</li>'
         html+='<li>- Orphanage law to protect childs from the harsh world</li>'
         html+='<li>- Season themes</li>'
-        html+='<li>- </li>'
+        html+='<li>- Town filters for graphs, but they make things laggy</li>'
         html+='<li>- </li>'
         html+='</ul>'
         html+='<h2 class="mt-3"> 5 June : Towns introduced</h2>'
