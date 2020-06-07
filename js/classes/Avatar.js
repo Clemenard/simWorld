@@ -1,12 +1,13 @@
-function Avatar(){
+function Avatar(owner,name,surname,sex){
     this.age=180;
     this.avatar=true;
         this.father="anonymous";
         this.mother="anonymous";
         this.house=0;
-        this.sex=$('#avatar-sex').val();
-    this.name=$('#avatar-name').val();
-    this.surname=$('#avatar-surname').val();
+        this.sex=sex;
+    this.name=name;
+    this.ownership=[owner,owner,owner,owner,owner,owner,owner,owner]
+    this.surname=surname;
     this.job=this.getJob();
     this.pairedWith=-1;
     this.childs=0;

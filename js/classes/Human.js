@@ -10,6 +10,7 @@ function Human(isGenerate=false,father,mother){
         this.father="anonymous";
         this.mother="anonymous";
         this.job=this.getJob(false);
+        this.ownership=[0,0,0,0,0,0,0,0]
     }
     else{
 this.age=0;
@@ -18,6 +19,12 @@ this.father=father.id;
 this.surname=father.surname;
 this.house=father.house;
 this.mother=mother.id;
+let genes= father.ownership.concat(mother.ownership)
+for(let i=0;i<8;i++){
+    let rand=utils.getRandomArbitrary(0,genes.length);
+    this.ownership.push(genes.splice(rand,1)) 
+}
+console.log(this.ownership)
 this.job={name:"student",salary:0};
 this.avatar=(father.avatar||mother.avatar)?true:false;
 }

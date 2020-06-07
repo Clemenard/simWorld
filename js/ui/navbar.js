@@ -215,7 +215,7 @@ childString+=child.display("child");
         html+="<td>"+element.gold+"</td></tr>";}
     })
     html+="</table></div><div class='col' id='census-stats'>";
-    let mainSurnames=world.getMainFamilies(year,town);
+    let mainSurnames=world.countObjByArg(list,"surname",year);
     mainSurnames=utils.getSortedKeys(mainSurnames);
     html+="<h3>Most used surnames</h3>"
     for( let i=0;i<10;i++){

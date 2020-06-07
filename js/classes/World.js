@@ -7,9 +7,11 @@ function World(duration=50,startPop=100,maxPop=10000,frameDuration=1000){
         let human=new Human(true)
         dc.alivehumanList.push(human);
     }
-    let avatar=new Avatar()
+    let avatar=new Avatar($('#avatar-name').val(),$('#avatar-surname').val(),$('#avatar-sex').val())
     dc.alivehumanList.push(avatar);
-    new House(true,avatar);
+    let rival=new Avatar('Lara',"Croft","female");
+    dc.alivehumanList.push(rival);
+    new House(true,rival);
 }
 World.prototype.getTownById= function(id){
 
@@ -37,13 +39,13 @@ World.prototype.getNobleHouse= function(option){
     return false;
 }
 
-World.prototype.getMainFamilies= function(year,town){
+World.prototype.countObjByArg= function(obj,arg,year,town){
     let mainFamilies=new Array();
 
-    dc.census.human[year].forEach(element => {
+    obj.forEach(element => {
         if(!town || dc.getOneBy("town",'id',dc.getOneBy("house",'id',element.house).town).id ==town){
-        if(!mainFamilies[element.surname]){mainFamilies[element.surname]=0;}
-        mainFamilies[element.surname]++; }
+        if(!mainFamilies[element[`${arg}`]]){mainFamilies[element[`${arg}`]]=0;}
+        mainFamilies[element[`${arg}`]]++; }
     });
     return mainFamilies;
 } 

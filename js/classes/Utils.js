@@ -10,7 +10,20 @@ Utils.prototype.numberParticle= function (number){
     default: return "th";
   }
 }
-
+Utils.prototype.racialTraits = function(){
+  let totalStat=[,0,0,0,0,0,0]
+  i=0;
+  while((totalStat<48 &&totalStat>96)|| i<10){
+    totalStat[0]=0
+    for(let j=1;j<=6;j++){
+      let randNbr=utils.getRandomArbitrary(5,20);
+      totalStat[0]=+randNbr;
+      totalStat[j]=randNbr;
+    }
+    i++;
+}
+return totalStat;
+}
 Utils.prototype.getDate= function(age){
   let year = Math.floor(age/12);
   let month=utils.getMonth(age%12+1);

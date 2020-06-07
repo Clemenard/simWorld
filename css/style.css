@@ -7,6 +7,9 @@
 .avatar{
     background-color:goldenrod;
 }
+.rival{
+    background-color:aquamarine;
+}
 .nav-link,#homepage, .link{
     cursor: pointer;
 }
