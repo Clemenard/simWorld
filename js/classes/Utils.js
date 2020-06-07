@@ -30,29 +30,26 @@ return totalStat;
 }
 Utils.prototype.birthTraits = function(father,mother,trait){
   let talentsRemaining=[0,1,2,3,4,5];
-  let babyTalents= new Array(0,0,0,0,0,0);
+  var babyTalents= new Array(10,10,10,10,10,10);
   let rand=utils.getRandomArbitrary(0,talentsRemaining.length-1);
   for(let i=0;i<5;i++){
     if( i<2){babyTalents[talentsRemaining[rand]]=father.talents[talentsRemaining[rand]];}
-    else if(i<4){babyTalents[talentsRemaining[rand]]=mother.talents[talentsRemaining[rand]]}
+    else if(i<4){babyTalents[talentsRemaining[rand]]=mother.talents[talentsRemaining[rand]];}
     else{babyTalents[talentsRemaining[rand]]=utils.getRandomArbitrary(5,20);}
-
-
+    if(isNaN(babyTalents[talentsRemaining[rand]]) || babyTalents[talentsRemaining[rand]]==0){
+      babyTalents[talentsRemaining[rand]]=utils.getRandomArbitrary(5,20);
+    console.log("wrong input")}
     talentsRemaining.splice(rand,1)
     rand=utils.getRandomArbitrary(0,talentsRemaining.length-1)
     rand=(rand>=0)?rand:0
-    if(i<4 && i>1){
-    }
-    if(isNaN(babyTalents[talentsRemaining[rand]])){
-      babyTalents[talentsRemaining[rand]]=utils.getRandomArbitrary(5,20);
-    console.log("wrong input")}
   }
-    if(trait){
-      if(babyTalents[trait]<8){babyTalents[trait]=10}
-      else{babyTalents[trait]+=2;}}
-
+  
+     if(trait){
+      if(babyTalents[trait]<8){babyTalents[Number(trait)]=10}
+      else{babyTalents[trait]+=2;}} 
 return babyTalents;
 }
+
 Utils.prototype.getOwner = function(ownership){
   let mainOwner=new Array();
 

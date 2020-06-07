@@ -13,12 +13,20 @@ $('body').on('click', '#changelog',function(){
     $('#myLogs').html(frontBlock.changelog());
 })
 
+$('body').on('click', '#user',function(){
+    $('#myLogs').html(frontBlock.userDisplay(10));
+})
+$('body').on('click', '.nav-link',function(){
+    $('.nav-link').removeClass('active');
+    $(this).addClass('active');
+})
+
 //generate new world
 $('body').on('click', '#begin',function(){
     $('#navbar').show();
     $('#timelapse').show();
+    dc.pseudo=($("#pseudo").val()!="")?$("#pseudo").val():"Booba"
     world= new World();
-    $('#myLogs').html('');
     dc.census.human.push(new Array());
     dc.alivehumanList.forEach(element => {
         dc.census.human[dc.census.human.length-1].push(jQuery.extend({}, element));
@@ -27,6 +35,7 @@ $('body').on('click', '#begin',function(){
     dc.alivehouseList.forEach(element => {
         dc.census.house[dc.census.house.length-1].push(jQuery.extend({}, element));
     });
+    $('#myLogs').html(frontBlock.userDisplay(10));
 oneTurn();
 })
 $('body').on('click', '.timelapse',function(){
@@ -96,41 +105,13 @@ $('body').on('click', '#census',function(){
     getCensus()
 })
 
+
 function humanData(id){
     try{
         id=Number(id)
     let search=dc.getOneBy('human','id',id);
-    let maleAncestors=search.getAncestors("male",new Array());
-    let femaleAncestors=search.getAncestors("female",new Array());
-    let html=''
-    html+='<h1>'+search.display("history")+'</h1>';
-    html+="<h2> Male ancestors</h2>";
-    maleAncestors.forEach(element=>{
-        html+='<p>'+element.display("history")+'</p>'; 
-    })
-    html+="<h2> Female ancestors</h2>";
-    femaleAncestors.forEach(element=>{
-        html+='<p>'+element.display("history")+'</p>'; 
-    })
-
-    html+='     <div class="form-group col-12 row">'
-html+='             <h3 class="col-12">Stats</h3>'
-html+='             <p class="avatar-trait col-4" id="av-for">Intelligence <br><strong> '+Math.floor(search.stats[0])+'</strong></p>'
-html+='             <p class="avatar-trait col-4" id="av-end">Wisdom <br><strong> '+Math.floor(search.stats[1])+'</strong></p>'
-html+='             <p class="avatar-trait col-4" id="av-agi">Dexterity <br><strong> '+Math.floor(search.stats[2])+'</strong></p>'
-html+='             <p class="avatar-trait col-4" id="av-dex">Charisma <br><strong> '+Math.floor(search.stats[3])+'</strong></p>'
-html+='             <p class="avatar-trait col-4" id="av-int">Luck <br><strong> '+Math.floor(search.stats[4])+'</strong></p>'
-html+='             <p class="avatar-trait col-4" id="av-sag">Constitution <br><strong> '+Math.floor(search.stats[5])+'</strong></p>'
-html+='     </div>'
-    html+="<h2> Life history</h2>";
-    html+="<h2 id='champcache' style='display:none;' data-id='"+id+"'>champcache</h2>";
-    dc.getBy("log","related",id).forEach(element=>{
-        html+=element.display();  
-    }) 
-    if(search.getHouse(true) && search.getHouse().gold>=0){
-    html+="<h3>My home has "+search.getHouse().gold+" thunes and is "+search.getHouse().state+".</h3>";}
-    html=utils.applyBBCode(html);
-    $('#myLogs').html(html);
+    
+    $('#myLogs').html(frontBlock.statDisplay(search));
     let data=world.getHouseGraph(search.id);
     let max=(search.logDay('death'))?search.logDay('death'):10000000
     let min=(search.logDay('birth'))?search.logDay('birth'):0

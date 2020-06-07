@@ -1,4 +1,4 @@
-function World(duration=500000,startPop=200,maxPop=10000,frameDuration=1000){
+function World(duration=5000000,startPop=200,maxPop=10000,frameDuration=1000){
     this.duration=(duration>1)?duration:50;
     this.startPop=(startPop>1)?startPop:100;
     this.maxPop=(maxPop>10)?maxPop:10000;
@@ -55,7 +55,7 @@ World.prototype.getDataGraph= function(graphs){
     switch(graphs){
         case "Medium Age":    data.push(header.concat(['Eldest']));break;
         case "Total Money":    data.push(header);break;
-        case "Total population":        data.push(header.concat(['0-15 yo','15-30 yo','30-45 yo','45-60 yo','60+ yo']));break;
+        case "Total Population":        data.push(header.concat(['0-15 yo','15-30 yo','30-45 yo','45-60 yo','60+ yo']));break;
     }   
     dc.census.human.forEach((element,i,childs)=>{
         let dataRow = [i];

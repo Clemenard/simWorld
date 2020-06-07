@@ -50,13 +50,14 @@ Human.prototype.getOlder = function(){
 }
 Human.prototype.deathProbability= function(){
     let socialFactor=(this.isNoble)?14:12
-    return  Math.random()*(this.AGE_MAX*15-this.age*14)*socialFactor;
+    let geneFactor=(this.stats[5]+30)/60
+    let ageFactor=(this.age<360)?5:(this.age>840)?0.5:1
+    return  Math.random()*(this.AGE_MAX*15-this.age*14)*socialFactor*geneFactor*ageFactor;
 }
 Human.prototype.weddingProbability= function(){
     let weddingChances=60
     if(this instanceof Avatar){
-    weddingChances/=2;
-console.log("wedding "+Math.ceil(weddingChances*25/this.stats[3]));}
+    weddingChances/=2;}
 
     return  Math.ceil(weddingChances*50/this.stats[3]);
 }
@@ -130,7 +131,9 @@ Human.prototype.orphans= function(){
         childs.forEach(child => {
         if(child.house==myself.house && child.age<180){
             new LogMessage("orphan",child.display("fullname")+", is now in an orphanage.",[child.id],town.id);
-child.house=town.getOrphanage().id;
+            if(town.getOrphanage()){
+child.house=town.getOrphanage().id;}
+else{console.log("no orphenage")}
         }    
         });
     }
@@ -144,7 +147,8 @@ Human.prototype.getNamed= function(){
 
 Human.prototype.succession= function(town){
     let successor=dc.getBy("human","parents",this.id)[0];
-    if(successor==undefined){successor=dc.richest(town).getHousemembers()[0];}
+    if(successor==undefined){
+        successor=dc.richest(town).getHousemembers()[0];}
     if(successor!=undefined){
         if(successor.getHouse().town!=town.id){
         successor.getHouse().town=town.id;}
@@ -289,7 +293,7 @@ Human.prototype.JOB_LIST = [
             this.sex=sex;
         this.name=name;
         this.ownership=new Array();
-        for(let i=0;i<8;i++){
+        for(let i=0;i<24;i++){
             this.ownership.push({id:owner,trait:trait})
         }
         this.owner={id:owner,trait:Number(trait)};

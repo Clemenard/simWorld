@@ -9,6 +9,7 @@ function DataCenter(){
     this.deadlogList=new Array();
     this.census={"human":new Array(),"house":new Array()};
     this.age=0;
+    this.pseudo="Booba"
     this.townsNumber=10;
 }
 DataCenter.prototype.getOneBy= function(obj,arg,value,year=-1){
@@ -41,7 +42,12 @@ DataCenter.prototype.getBy= function(obj,arg,value,year=-1){
         search=list.filter(function(ele){
             if(arg=="related"){return ele[`${arg}`].includes(value);}
             if(arg=="parents"){return ele.father==value || ele.mother==value;}
-            else { return ele[`${arg}`] == value; }});
+            else {
+                if(/(.+?)\.(.+)/.test(arg)){
+                    let tabMatch=arg.match(/(.+?)\.(.+)/)
+                    return ele[`${tabMatch[1]}`][`${tabMatch[2]}`] == value;}
+                else{
+             return ele[`${arg}`] == value; }}});
         if (search){return search;}
     }
         return null;
@@ -49,7 +55,7 @@ DataCenter.prototype.getBy= function(obj,arg,value,year=-1){
 DataCenter.prototype.richest= function(town){
     let towns=dc.alivehouseList.filter(function(ele){ return ele.town == town.id; });
     return towns.reduce((accumulator, currentValue) => {
-        return (accumulator.gold > currentValue.gold ? accumulator : currentValue);},{gold:-100});
+        return accumulator.gold > currentValue.gold ? accumulator : currentValue;},{gold:-100});
 }
 DataCenter.prototype.TOWN_NAME_LIST = ['Paris',    'Marseille',    'Lyon',    'Nice',    'Lille',    'Rennes',    'Nantes',    'Angers',    'Strasbourg',    'Poitiers',    'Angouleme',    'Grenoble',    'Amiens',    'Rouen',    'Caen',    'Bordeau',    'Pau',    'Montpellier',    'Narbonne',    'Orange',    'Avignon',    'Limoges'];
 DataCenter.prototype.GRAPH_CAT = ['Medium Age',    'Total Money',    'Total Population'];

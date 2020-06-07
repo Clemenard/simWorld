@@ -54,7 +54,9 @@ dc.alivehouseList=dc.alivehouseList.filter(function(ele){
 
 
 dc.alivetownList.forEach(town => {
-    if(town.king.age<0){town.king.succession(town);}
+    
+    if(town.king.age<0){
+        town.king.succession(town);}
 });
 dc.age++;
 if(dc.age%12==0){

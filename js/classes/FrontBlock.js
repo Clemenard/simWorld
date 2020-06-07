@@ -7,7 +7,7 @@ html+='<h1 class="mb-3 col-12 text-center">Settings</h1>'
 html+='<div class=" col-8 row mt-5">'
 html+='     <div class="form-group col-6">'
 html+='            <label for="year">Your pseudo</label>'
-html+='            <input type="text" id="pseudo" ><br>'
+html+='            <input type="text" id="pseudo" placeholder="Booba" ><br>'
 html+='      <button id="begin" class="ml-5">Generate a new world</button>'
 html+='     </div>'
 html+='     <div class="form-group col-6 row">'
@@ -83,14 +83,21 @@ FrontBlock.prototype.graphPanel = function(min=0,max=100000,interface="census",c
     return html;}
 
     FrontBlock.prototype.changelog = function(){
+        
         let html='<h1 class="mt-5">Changelog</h1>'
+        html+='<h2 class="mt-3"> 7 June : Genetic & rivals</h2>'
+        html+='<ul>'
+        html+='<li>- Now each human are bounded to 6 talents</li>'
+        html+='<li>- Stats grow depending on the talent with age</li>'
+        html+='<li>- A rival has appeared! who will have the biggest clan? </li>'
+        html+='<li>- Use for stat will appear soon...</li>'
+        html+='</ul>'
         html+='<h2 class="mt-3"> 6 June : Towns laws</h2>'
         html+='<ul>'
         html+='<li>- Bugfix : some houses weren\'t dissolved after death</li>'
         html+='<li>- Orphanage law to protect childs from the harsh world</li>'
         html+='<li>- Season themes</li>'
         html+='<li>- Town filters for graphs, but they make things laggy</li>'
-        html+='<li>- </li>'
         html+='</ul>'
         html+='<h2 class="mt-3"> 5 June : Towns introduced</h2>'
         html+='<ul>'
@@ -101,3 +108,46 @@ FrontBlock.prototype.graphPanel = function(min=0,max=100000,interface="census",c
         html+='<li>- this changelog panel</li>'
         html+='</ul>'
         return html;}
+
+        FrontBlock.prototype.statDisplay = function(human){
+            let maleAncestors=human.getAncestors("male",new Array());
+    let femaleAncestors=human.getAncestors("female",new Array());
+    let html=''
+    html+='<h1>'+human.display("history")+'</h1>';
+    html+="<h2> Male ancestors</h2>";
+    maleAncestors.forEach(element=>{
+        html+='<p>'+element.display("history")+'</p>'; 
+    })
+    html+="<h2> Female ancestors</h2>";
+    femaleAncestors.forEach(element=>{
+        html+='<p>'+element.display("history")+'</p>'; 
+    })
+        html+='     <div class="form-group col-12 row">'
+        html+='             <h3 class="col-12">Stats</h3>'
+        html+='             <p class="avatar-trait col-4" id="av-for">Intelligence <br><strong> '+Math.floor(human.stats[0])+'</strong></p>'
+        html+='             <p class="avatar-trait col-4" id="av-end">Wisdom <br><strong> '+Math.floor(human.stats[1])+'</strong></p>'
+        html+='             <p class="avatar-trait col-4" id="av-agi">Dexterity <br><strong> '+Math.floor(human.stats[2])+'</strong></p>'
+        html+='             <p class="avatar-trait col-4" id="av-dex">Charisma <br><strong> '+Math.floor(human.stats[3])+'</strong></p>'
+        html+='             <p class="avatar-trait col-4" id="av-int">Luck <br><strong> '+Math.floor(human.stats[4])+'</strong></p>'
+        html+='             <p class="avatar-trait col-4" id="av-sag">Constitution <br><strong> '+Math.floor(human.stats[5])+'</strong></p>'
+        html+='     </div>'
+        
+    html+="<h2> Life history</h2>";
+    html+="<h2 id='champcache' style='display:none;' data-id='"+human.id+"'>champcache</h2>";
+    dc.getBy("log","related",human.id).forEach(element=>{
+        html+=element.display();  
+    }) 
+    if(human.getHouse(true) && human.getHouse().gold>=0){
+    html+="<h3>My home has "+human.getHouse().gold+" thunes and is "+human.getHouse().state+".</h3>";}
+    html=utils.applyBBCode(html);
+        return html;}
+
+        FrontBlock.prototype.userDisplay = function(user){
+            let html="<h2> People of the "+dc.pseudo+" clan.</h2>"
+            let minions=dc.getBy("human","owner.id",user)
+            minions.forEach(m => {
+               html+="<p>"+m.display("fullname")+"</p>" 
+            });
+            html=utils.applyBBCode(html)
+            return html
+        }
