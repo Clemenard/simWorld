@@ -17,7 +17,7 @@ $('body').on('click', '#changelog',function(){
 $('body').on('click', '#begin',function(){
     $('#navbar').show();
     $('#timelapse').show();
-    world= new World(Number($('#age').val())*12,Number($('#pop-start').val()),Number($('#pop-max').val()));
+    world= new World();
     $('#myLogs').html('');
     dc.census.human.push(new Array());
     dc.alivehumanList.forEach(element => {
@@ -112,12 +112,22 @@ function humanData(id){
     femaleAncestors.forEach(element=>{
         html+='<p>'+element.display("history")+'</p>'; 
     })
+
+    html+='     <div class="form-group col-12 row">'
+html+='             <h3 class="col-12">Stats</h3>'
+html+='             <p class="avatar-trait col-4" id="av-for">Intelligence <br><strong> '+Math.floor(search.stats[0])+'</strong></p>'
+html+='             <p class="avatar-trait col-4" id="av-end">Wisdom <br><strong> '+Math.floor(search.stats[1])+'</strong></p>'
+html+='             <p class="avatar-trait col-4" id="av-agi">Dexterity <br><strong> '+Math.floor(search.stats[2])+'</strong></p>'
+html+='             <p class="avatar-trait col-4" id="av-dex">Charisma <br><strong> '+Math.floor(search.stats[3])+'</strong></p>'
+html+='             <p class="avatar-trait col-4" id="av-int">Luck <br><strong> '+Math.floor(search.stats[4])+'</strong></p>'
+html+='             <p class="avatar-trait col-4" id="av-sag">Constitution <br><strong> '+Math.floor(search.stats[5])+'</strong></p>'
+html+='     </div>'
     html+="<h2> Life history</h2>";
     html+="<h2 id='champcache' style='display:none;' data-id='"+id+"'>champcache</h2>";
     dc.getBy("log","related",id).forEach(element=>{
         html+=element.display();  
     }) 
-    if(search.getHouse(true)){
+    if(search.getHouse(true) && search.getHouse().gold>=0){
     html+="<h3>My home has "+search.getHouse().gold+" thunes and is "+search.getHouse().state+".</h3>";}
     html=utils.applyBBCode(html);
     $('#myLogs').html(html);
@@ -215,7 +225,7 @@ childString+=child.display("child");
         html+="<td>"+element.gold+"</td></tr>";}
     })
     html+="</table></div><div class='col' id='census-stats'>";
-    let mainSurnames=world.countObjByArg(list,"surname",year);
+    let mainSurnames=world.getMainFamilies(year,town);
     mainSurnames=utils.getSortedKeys(mainSurnames);
     html+="<h3>Most used surnames</h3>"
     for( let i=0;i<10;i++){

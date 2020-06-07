@@ -46,9 +46,13 @@ function oneTurn(){
     
 });
 dc.alivehumanList=dc.alivehumanList.filter(function(ele){ return ele.age >= 0; });
+
 dc.alivehouseList=dc.alivehouseList.filter(function(ele){ 
+    if(ele.isEmpty(true))
     if(ele instanceof Orphanage && ele.gold < 0){console.log("orphanage destroyed")}
-    return ele.gold >= 0; });
+    return ele.gold >= 0 && !ele.isEmpty(true); });
+
+
 dc.alivetownList.forEach(town => {
     if(town.king.age<0){town.king.succession(town);}
 });

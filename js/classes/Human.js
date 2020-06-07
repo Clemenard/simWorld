@@ -6,11 +6,16 @@ function Human(isGenerate=false,father,mother){
     if(isGenerate){
         this.surname=this.getSurNamed();
         this.age=utils.getRandomArbitrary(240,this.AGE_MAX/2);
-        this.avatar=false;
         this.father="anonymous";
         this.mother="anonymous";
         this.job=this.getJob(false);
-        this.ownership=[0,0,0,0,0,0,0,0]
+        this.talents=utils.racialTraits(false);
+        this.stats=jQuery.extend({}, this.talents);
+        this.ownership=new Array();
+        for(let i=0;i<8;i++){
+            this.ownership.push({id:0,trait:false}) 
+        }
+        this.owner={id:0,trait:false}
     }
     else{
 this.age=0;
@@ -20,13 +25,15 @@ this.surname=father.surname;
 this.house=father.house;
 this.mother=mother.id;
 let genes= father.ownership.concat(mother.ownership)
+this.ownership=new Array();
 for(let i=0;i<8;i++){
     let rand=utils.getRandomArbitrary(0,genes.length);
-    this.ownership.push(genes.splice(rand,1)) 
+    this.ownership.push(genes.splice(rand,1)[0]) 
 }
-console.log(this.ownership)
+this.owner=utils.getOwner(this.ownership)
+this.talents=utils.birthTraits(father,mother,this.owner.trait);
+this.stats=[1,1,1,1,1,1];
 this.job={name:"student",salary:0};
-this.avatar=(father.avatar||mother.avatar)?true:false;
 }
     }
     this.pairedWith=-1;
@@ -36,10 +43,22 @@ this.avatar=(father.avatar||mother.avatar)?true:false;
 }
 Human.prototype.AGE_MAX = 1200;
 Human.prototype.getOlder = function(){
-    this.age++;}
+    this.age++;
+    for(let i=0;i<6;i++){
+        this.stats[i]+=Math.random()*this.talents[i]/100
+    }
+}
 Human.prototype.deathProbability= function(){
     let socialFactor=(this.isNoble)?14:12
     return  Math.random()*(this.AGE_MAX*15-this.age*14)*socialFactor;
+}
+Human.prototype.weddingProbability= function(){
+    let weddingChances=60
+    if(this instanceof Avatar){
+    weddingChances/=2;
+console.log("wedding "+Math.ceil(weddingChances*25/this.stats[3]));}
+
+    return  Math.ceil(weddingChances*50/this.stats[3]);
 }
 Human.prototype.wedding= function(){
     try{
@@ -48,20 +67,20 @@ Human.prototype.wedding= function(){
         return (ele.sex!=myself.sex && ele.pairedWith==-1 && ele.age<600 && ele.age>180 && ele.id!=myself.id );
     });
     partner=partner[utils.getRandomArbitrary(0,partner.length-1)]
-if(partner && utils.getRandomArbitrary(0,60)==1){
+if(partner && utils.getRandomArbitrary(0,this.weddingProbability())==1){
     this.pairedWith=partner.id;
     partner.pairedWith=this.id;
     let husband= (this.sex=="male")?this:partner
     let wife=(this.sex=="male")?partner:this
     let wifeHouse=wife.getHouse("wife")
     let bonusGold=0;
-    if(wifeHouse && wifeHouse.isEmpty()){
+    if(wifeHouse && wifeHouse.isEmpty(false)){
         bonusGold+=wifeHouse.gold;
         wifeHouse.gold=-1;
         dc.deadhouseList.push(wifeHouse);
                 }
                 let husbandHouse=husband.getHouse()
-    if(husbandHouse && husbandHouse.isEmpty()){
+    if(husbandHouse && husbandHouse.isEmpty(false)){
         bonusGold+=husbandHouse.gold;
         husbandHouse.gold=-1;
         dc.deadhouseList.push(husbandHouse);
@@ -82,7 +101,7 @@ Human.prototype.death= function(){
     
         dc.deadhumanList.push(this);
         let house=this.getHouse()
-        if(house && house.isEmpty()){
+        if(house && house.isEmpty(false)){
 house.inheritance();
         }
         let partner= dc.getOneBy('human','id',this.pairedWith);
@@ -205,7 +224,7 @@ Human.prototype.logDay= function(type){
 Human.prototype.display= function(style="basic"){
     let html='';
     if(this.isKing()){html+='&#128081;';}
-    let setClasses=(this.avatar)?'avatar '+this.sex:' '+this.sex;
+    let setClasses=(this.owner && this.owner.id>0)?'avatar'+this.owner.id+' '+this.sex:' '+this.sex;
     switch(style){
         case "history":
             html+=utils.genderMark(this.sex,"name")+' ['+setClasses+' id='+this.id+']'+this.nobleParticle().toUpperCase()+''+this.surname.toUpperCase()+" "+this.name+"[/id], "+this.logDay('birth')+"-"+this.logDay('death')
@@ -260,16 +279,23 @@ Human.prototype.JOB_LIST = [
     {name:"technician",salary:2},
     {name:"proletarian",salary:1}]
 
+
     //CLASS
-    function Avatar(){
+    function Avatar(owner,name,surname,sex,trait){
         this.age=180;
-        this.avatar=true;
             this.father="anonymous";
             this.mother="anonymous";
             this.house=0;
-            this.sex=$('#avatar-sex').val();
-        this.name=$('#avatar-name').val();
-        this.surname=$('#avatar-surname').val();
+            this.sex=sex;
+        this.name=name;
+        this.ownership=new Array();
+        for(let i=0;i<8;i++){
+            this.ownership.push({id:owner,trait:trait})
+        }
+        this.owner={id:owner,trait:Number(trait)};
+        this.talents=utils.racialTraits(Number(trait));
+        this.stats=this.talents;
+        this.surname=surname;
         this.job=this.getJob();
         this.pairedWith=-1;
         this.childs=0;

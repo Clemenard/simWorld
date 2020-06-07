@@ -41,9 +41,9 @@ House.prototype.newMember= function(human){
     formerHouse.gold=Math.round((formerHouse.gold)*9/10);
     return lastHouseId;
 }
-House.prototype.isEmpty= function(){
+House.prototype.isEmpty= function(totally=true){
     let housekeepers=this.getHousemembers()
-    if(housekeepers.length>1 || this instanceof Orphanage){
+    if((totally && housekeepers.length>0) || (!totally && housekeepers.length>1) ||this instanceof Orphanage){
         return false;}
     return true;
 }
@@ -66,7 +66,7 @@ House.prototype.inheritance= function(){
     else{
         new LogMessage("inheritance",this.leader.display('job')+" dies without heritors.",[this.leader.id],this.town)
     }
-    this.gold=-10000;
+    this.gold=-1;
     dc.deadhouseList.push(this);
     return true;
 }

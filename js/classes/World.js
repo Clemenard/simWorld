@@ -1,17 +1,16 @@
-function World(duration=50,startPop=100,maxPop=10000,frameDuration=1000){
+function World(duration=500000,startPop=200,maxPop=10000,frameDuration=1000){
     this.duration=(duration>1)?duration:50;
     this.startPop=(startPop>1)?startPop:100;
     this.maxPop=(maxPop>10)?maxPop:10000;
     this.frameDuration=(frameDuration>5)?frameDuration:20;
-    for(let i=0;i<this.startPop-1;i++){
+    for(let i=0;i<this.startPop-2;i++){
         let human=new Human(true)
         dc.alivehumanList.push(human);
     }
-    let avatar=new Avatar($('#avatar-name').val(),$('#avatar-surname').val(),$('#avatar-sex').val())
+    let avatar=new Avatar(10,$('#avatar-name').val(),$('#avatar-surname').val(),$('#avatar-sex').val(),$('#avatar-spec').val())
     dc.alivehumanList.push(avatar);
-    let rival=new Avatar('Lara',"Croft","female");
+    let rival=new Avatar(11,'Lara',"Croft","female",$('#rival-spec').val());
     dc.alivehumanList.push(rival);
-    new House(true,rival);
 }
 World.prototype.getTownById= function(id){
 
@@ -39,13 +38,13 @@ World.prototype.getNobleHouse= function(option){
     return false;
 }
 
-World.prototype.countObjByArg= function(obj,arg,year,town){
+World.prototype.getMainFamilies= function(year,town){
     let mainFamilies=new Array();
 
-    obj.forEach(element => {
+    dc.census.human[year].forEach(element => {
         if(!town || dc.getOneBy("town",'id',dc.getOneBy("house",'id',element.house).town).id ==town){
-        if(!mainFamilies[element[`${arg}`]]){mainFamilies[element[`${arg}`]]=0;}
-        mainFamilies[element[`${arg}`]]++; }
+            if(!mainFamilies[element.surname]){mainFamilies[element.surname]=0;}
+        mainFamilies[element.surname]++; }
     });
     return mainFamilies;
 } 
@@ -60,6 +59,7 @@ World.prototype.getDataGraph= function(graphs){
     }   
     dc.census.human.forEach((element,i,childs)=>{
         let dataRow = [i];
+        let gold=0;
 switch(graphs){
     case "Medium Age": 
         dataRow.push(element.reduce((accumulator, currentValue) => {
@@ -69,7 +69,9 @@ switch(graphs){
         break;
     case "Total Money": 
         dataRow.push(dc.census.house[i].reduce((accumulator, currentValue) => {
-            return (accumulator + currentValue.gold);},0));
+            if(currentValue.gold<0){gold=0}
+            else{gold=currentValue.gold}
+            return (accumulator + gold);},0));
         break;
     case "Total Population":
         dataRow.push(element.length);

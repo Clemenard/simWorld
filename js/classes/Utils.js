@@ -10,20 +10,60 @@ Utils.prototype.numberParticle= function (number){
     default: return "th";
   }
 }
-Utils.prototype.racialTraits = function(){
-  let totalStat=[,0,0,0,0,0,0]
+Utils.prototype.racialTraits = function(trait){
+  let totalStat=[0,0,0,0,0,0,0]
   i=0;
-  while((totalStat<48 &&totalStat>96)|| i<10){
+  while((totalStat<48 &&totalStat>100)|| i<10){
     totalStat[0]=0
     for(let j=1;j<=6;j++){
       let randNbr=utils.getRandomArbitrary(5,20);
-      totalStat[0]=+randNbr;
+      totalStat[0]+=randNbr;
       totalStat[j]=randNbr;
+      if(trait){
+      if(totalStat[trait]<8){totalStat[trait]=10}
+      else{totalStat[trait]+=2;}}
     }
     i++;
 }
+totalStat.shift()
 return totalStat;
 }
+Utils.prototype.birthTraits = function(father,mother,trait){
+  let talentsRemaining=[0,1,2,3,4,5];
+  let babyTalents= new Array(0,0,0,0,0,0);
+  let rand=utils.getRandomArbitrary(0,talentsRemaining.length-1);
+  for(let i=0;i<5;i++){
+    if( i<2){babyTalents[talentsRemaining[rand]]=father.talents[talentsRemaining[rand]];}
+    else if(i<4){babyTalents[talentsRemaining[rand]]=mother.talents[talentsRemaining[rand]]}
+    else{babyTalents[talentsRemaining[rand]]=utils.getRandomArbitrary(5,20);}
+
+
+    talentsRemaining.splice(rand,1)
+    rand=utils.getRandomArbitrary(0,talentsRemaining.length-1)
+    rand=(rand>=0)?rand:0
+    if(i<4 && i>1){
+    }
+    if(isNaN(babyTalents[talentsRemaining[rand]])){
+      babyTalents[talentsRemaining[rand]]=utils.getRandomArbitrary(5,20);
+    console.log("wrong input")}
+  }
+    if(trait){
+      if(babyTalents[trait]<8){babyTalents[trait]=10}
+      else{babyTalents[trait]+=2;}}
+
+return babyTalents;
+}
+Utils.prototype.getOwner = function(ownership){
+  let mainOwner=new Array();
+
+  ownership.forEach(element => {
+          if( element && element.id && Number(element.id)>0 &&!mainOwner[Number(element.id)]){mainOwner[Number(element.id)]=0;}
+          if(element&& element.id && Number(element.id)>0){mainOwner[Number(element.id)]++; }
+  });
+  if(utils.getSortedKeys(mainOwner)[0]){return {id:Number(utils.getSortedKeys(mainOwner)[0].key),trait:utils.getSortedKeys(mainOwner)[0].value}}
+  return {id:0,trait:false};
+}
+
 Utils.prototype.getDate= function(age){
   let year = Math.floor(age/12);
   let month=utils.getMonth(age%12+1);
@@ -63,7 +103,7 @@ Utils.prototype.aOrAn= function(word){
   return(['a','e','i','o','u','y'].includes(word.slice(0,1)))?"n":"";}
 
  Utils.prototype.applyBBCode = function(string){
-  string=string.replace(/\[(avatar)? (\w*?) id=(\d+)\](.*?)\[\/id\]/g,"<span class='$1 $2 link' value='$3' title='id : $3'>$4</span>");
+  string=string.replace(/\[(avatar([0-9]{0,6}))? (\w*?) id=(\d+)\](.*?)\[\/id\]/g,"<span class='$1 $3 link' value='$4' title='id : $4'>$5</span>");
   return string;
 }
 
