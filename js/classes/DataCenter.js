@@ -7,10 +7,12 @@ function DataCenter(){
     this.deadtownList=new Array();
     this.alivelogList=new Array();
     this.deadlogList=new Array();
+    this.userList=new Array();
     this.census={"human":new Array(),"house":new Array()};
     this.age=0;
     this.pseudo="Booba"
     this.townsNumber=10;
+
 }
 DataCenter.prototype.getOneBy= function(obj,arg,value,year=-1){
     let search=false;
@@ -58,6 +60,7 @@ DataCenter.prototype.richest= function(town){
         return accumulator.gold > currentValue.gold ? accumulator : currentValue;},{gold:-100});
 }
 DataCenter.prototype.TOWN_NAME_LIST = ['Paris',    'Marseille',    'Lyon',    'Nice',    'Lille',    'Rennes',    'Nantes',    'Angers',    'Strasbourg',    'Poitiers',    'Angouleme',    'Grenoble',    'Amiens',    'Rouen',    'Caen',    'Bordeau',    'Pau',    'Montpellier',    'Narbonne',    'Orange',    'Avignon',    'Limoges'];
+DataCenter.prototype.GENE_NAME_LIST = ['crazy',    'logical',    'healthy',    'sickly',    'handsome',    'ugly',    'cunning',    'naive',    'smart',    'dull',    'curious',    'indifferent',    'ermit',    'sociable',    'patient',    'ambitious',    'humble',    'calm',    'angry',    'talkative',    'silent',    'go genius'];
 DataCenter.prototype.GRAPH_CAT = ['Medium Age',    'Total Money',    'Total Population'];
 
 DataCenter.prototype.SURNAME_LIST = ['Martin',
