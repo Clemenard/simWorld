@@ -138,6 +138,14 @@ FrontBlock.prototype.statDisplay = function (human) {
         html += '             <p class="avatar-trait col-3" > ' + mainGenes[i].key + '</strong></p>'
     }
     html += '     </div>'
+    if (dc.userList[0].gp > 2) {
+        html += '     <select id="add-gene">'
+        for (let i = 0; i < dc.GENE_NAME_LIST.length; i++) {
+            html += '     <option value="' + dc.GENE_NAME_LIST[i] + '">' + dc.GENE_NAME_LIST[i] + '</option>'
+        }
+        html += '     </select>'
+        html += '     <button id="submit-gene">Buy a gene (3 GP)</button>'
+    }
     html += '     </div>'
 
     html += "<h2> Life history</h2>";

@@ -82,6 +82,14 @@ Human.prototype.deathProbability = function () {
     let ageFactor = (this.age < 360) ? 5 : (this.age > 840) ? 0.5 : 1
     return Math.random() * (this.AGE_MAX * 15 - this.age * 14) * socialFactor * geneFactor * ageFactor;
 }
+Human.prototype.addGene = function (owner, name) {
+    this.ownership.push({
+        id: owner,
+        name: name
+    })
+    dc.userList[0].gp -= 3;
+    return true;
+}
 Human.prototype.weddingProbability = function () {
     let weddingChances = 60
     if (this instanceof Avatar) {
