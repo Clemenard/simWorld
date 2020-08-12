@@ -1,77 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <title>Sim World</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <title>Sim World</title>
 </head>
+
 <body class="winter">
-    <div class="container">
-        <h1 id="homepage"> Sim World &#127758;</h1>
+  <div class="container">
+    <h1 id="homepage"> Sim World &#127758;</h1>
     <div id="timelapse" style='display:none;'>
-        <div id="calendar"></div>
-    <button id="timelapse-pause" class="timelapse">Pause</button>
-    <button id="timelapse-play" class="timelapse" disabled>Play</button>
-    <button id="timelapse-play2" class="timelapse">Play x2</button>
-    <button id="timelapse-play10" class="timelapse">Play x10</button>
-    <button id="timelapse-play50" class="timelapse">Play x50</button>
-</div>
+      <div id="calendar"></div>
+      <button id="timelapse-pause" class="timelapse">Pause</button>
+      <button id="timelapse-play" class="timelapse" disabled>Play</button>
+      <button id="timelapse-play2" class="timelapse">Play x2</button>
+      <button id="timelapse-play10" class="timelapse">Play x10</button>
+      <button id="timelapse-play50" class="timelapse">Play x50</button>
+    </div>
     <div id="navbar" style='display:none;'>
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <input type="number" id="year" value=-1 step=1 min=-1>
-                <label class="nav-link" for="year">Choose a year</label>
-              </li>
-              <li class="nav-item">
-                <input type="number" id="id-human" value=0 step=1 min=0>
-                <label class="nav-link" for="id-human" id="search-human">Search this human (id)</label>
-              </li>
-            <li class="nav-item">
-                <select class="nav-link" id="chooseStat">
-                    <option value="all">All logs</option>
-                    <option value="birth">Births</option>
-                    <option value="death">Deaths</option>
-                    <option value="wedding">Weddings</option>
-                    <option value="inheritance">Inheritances</option>
-                    <option value="job">Job</option>
-                    <option value="rank">Rank</option>
-                    <option value="time">Time</option>
-                    <option value="orphan">Orphans</option>
-                    <option value="crime">Crime</option>
-                    <option value="town">Town</option>
-                </select>
-            </li>
-            <li class="nav-item">
-              <select class="nav-link" id="chooseTown">
-                  <option value="-1">All towns</option>
-              </select>
-          </li>
-            <li class="nav-item">
-              <span id="census" class="nav-link">Census</a>
-            </li>
-            <li class="nav-item">
-              <span class="nav-link" id="graph">Graphs</a>
-            </li>
-            <li class="nav-item">
-              <span class="nav-link active" id="user">User</a>
-            </li>
-          </ul>
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <input type="number" id="year" value=-1 step=1 min=-1>
+          <label class="nav-link" for="year">Choose a year</label>
+        </li>
+        <li class="nav-item">
+          <input type="number" id="id-human" value=0 step=1 min=0>
+          <label class="nav-link" for="id-human" id="search-human">Search this human (id)</label>
+        </li>
+        <li class="nav-item">
+          <select class="nav-link" id="chooseStat">
+            <option value="all">All logs</option>
+            <option value="birth">Births</option>
+            <option value="death">Deaths</option>
+            <option value="wedding">Weddings</option>
+            <option value="inheritance">Inheritances</option>
+            <option value="job">Job</option>
+            <option value="rank">Rank</option>
+            <option value="time">Time</option>
+            <option value="orphan">Orphans</option>
+            <option value="crime">Crime</option>
+            <option value="town">Town</option>
+          </select>
+        </li>
+        <li class="nav-item">
+          <select class="nav-link" id="chooseTown">
+            <option value="-1">All towns</option>
+          </select>
+        </li>
+        <li class="nav-item">
+          <span id="census" class="nav-link">Census</a>
+        </li>
+        <li class="nav-item">
+          <span class="nav-link" id="graph">Graphs</a>
+        </li>
+        <li class="nav-item">
+          <span class="nav-link active" id="user">User</a>
+        </li>
+      </ul>
     </div>
     <div id="myLogs">
     </div>
-</div>
-<footer class="row">
-  <p class="col-8 ml-5">A (game) by Clément Menard. <a href="https://discord.gg/CqSHps">It will evolve way further...</a></p>
-  <button class="col-2" id='changelog'>Changelog</button>
-</footer>
+  </div>
+  <footer class="row">
+    <p class="col-8 ml-5">A (game) by Clément Menard. <a href="https://discord.gg/CqSHps">It will evolve way
+        further...</a></p>
+    <button class="col-2" id='changelog'>Changelog</button>
+  </footer>
 </body>
-<script
-  src="https://code.jquery.com/jquery-3.5.1.min.js"
-  integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
-  crossorigin="anonymous"></script>
-  <script src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"
+  integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/charts/loader.js"></script>
 <script src="js/classes/Utils.js"></script>
 <script src="js/classes/Human.js"></script>
 <script src="js/classes/World.js"></script>
@@ -82,4 +83,5 @@
 <script src="js/classes/Town.js"></script>
 <script src="js/ui/navbar.js"></script>
 <script src="js/ui/index.js"></script>
+
 </html>
